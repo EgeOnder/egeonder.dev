@@ -41,7 +41,10 @@ jobs:
       - name: Install deps (with cache)
         run: pnpm install
 
+      - name: Lint
+        run: pnpm lint
+
       - run: cp .env.example .env.local
 
       - name: Build the project
-        run: pnpm build lint
+        run: pnpm build

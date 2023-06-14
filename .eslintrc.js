@@ -28,6 +28,7 @@ const config = {
   reportUnusedDisableDirectives: true,
   parser: "@typescript-eslint/parser",
   parserOptions: {
+    project: ["./tsconfig.json"],
     ecmaVersion: "latest",
   },
 };
