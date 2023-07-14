@@ -24,6 +24,8 @@
     }
   },
   "include": [
+    "next.config.mjs",
+    "src/*.mjs",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",

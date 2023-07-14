@@ -1,3 +1,4 @@
+import { ThemeProvider } from "~/components/theme-provider";
 import "./globals.css";
 import { Inter } from "next/font/google";
 
@@ -8,6 +9,14 @@ export const metadata = {
   description: "Personal page for Ege Önder",
 };
 
+interface ContainerProps {
+  children?: React.ReactNode;
+}
+
+const Container = ({ children }: ContainerProps) => (
+  <div className="container mx-auto max-w-screen-md">{children}</div>
+);
+
 export default function RootLayout({
   children,
 }: {
@@ -15,7 +24,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Container>{children}</Container>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
