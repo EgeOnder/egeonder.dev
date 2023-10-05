@@ -1,4 +1,4 @@
-import { Github, Twitter } from "lucide-react";
+import { Github, Linkedin, Mail, Twitter } from "lucide-react";
 import React from "react";
 
 const Footer = () => {
@@ -8,7 +8,7 @@ const Footer = () => {
         &copy; {new Date().getFullYear()} Ege Onder
       </p>
       <a
-        href="https://twitter.com/EgeOnder23"
+        href="https://twitter.com/EgeOnder23/"
         target="_blank"
         rel="noopener noreferrer"
         className="ml-4 text-gray-500 hover:text-accent"
@@ -16,12 +16,27 @@ const Footer = () => {
         <Twitter className="h-4 w-4" />
       </a>
       <a
-        href="https://github.com/EgeOnder/egeonder.dev"
+        href="https://github.com/EgeOnder/"
         target="_blank"
         rel="noopener noreferrer"
         className="ml-4 text-gray-500 hover:text-accent"
       >
         <Github className="h-4 w-4" />
+      </a>
+      <a
+        href="mailto:me@egeonder.dev"
+        rel="noopener noreferrer"
+        className="ml-4 text-gray-500 hover:text-accent"
+      >
+        <Mail className="h-4 w-4" />
+      </a>
+      <a
+        href="https://www.linkedin.com/in/egeonder/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="ml-4 text-gray-500 hover:text-accent"
+      >
+        <Linkedin className="h-4 w-4" />
       </a>
     </footer>
   );

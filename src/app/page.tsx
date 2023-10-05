@@ -29,9 +29,8 @@ const Home = () => {
       <p className="text-sm text-gray-500">
         You can reach me via{" "}
         <a
-          href="mailto:ege@kafeasist.com"
+          href="mailto:me@egeonder.dev"
           className="text-gray-400 hover:underline"
-          target="_blank"
           rel="noopener noreferrer"
         >
           e-mail

@@ -3,9 +3,7 @@ import { z } from "zod";
 
 export const env = createEnv({
   server: {
-    DATABASE_HOST: z.string(),
-    DATABASE_USERNAME: z.string(),
-    DATABASE_PASSWORD: z.string(),
+    DATABASE_URL: z.string(),
   },
   client: {},
   experimental__runtimeEnv: process.env,

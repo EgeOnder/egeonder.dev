@@ -6,8 +6,10 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "egeonder.dev",
-  description: "Personal page for Ege Önder",
+  description: "This is where I have fun writing about stuff about the web.",
 };
+
+export const runtime = "edge";
 
 interface ContainerProps {
   children?: React.ReactNode;

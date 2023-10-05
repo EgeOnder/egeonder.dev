@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "id": 0,
+      "name": "kafeasist",
+      "description": "kafeasist is a café/restaurant/bar management software as a service. kafeasist makes managing your business much more simpler with easy-to-use dashboard. With kafeasist, you won't need any other software to run your business.",
+      "href": "https://kafeasist.com/"
+    },
+    {
+      "id": 1,
+      "name": "vue-paho-mqtt",
+      "description": "Easy-to-use Paho MQTT client for Vue 3 with centralized subscription management, type support, and built-in optional alert notification library.",
+      "href": "https://github.com/kaandesu/vue-paho-mqtt/"
+    },
+    {
+      "id": 2,
+      "name": "istasyoncikolata",
+      "description": "istasyoncikolata is a website for a restaurant/café built with Astro.",
+      "href": "https://github.com/EgeOnder/istasyoncikolata/"
+    }
+  ]
+}
