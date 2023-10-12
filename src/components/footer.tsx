@@ -3,7 +3,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="fixed bottom-0 left-0 flex w-full items-center justify-center border-t-2 py-3 text-center">
+    <footer className="absolute bottom-0 left-0 flex h-12 w-full items-center justify-center border-t-2 py-3 text-center">
       <p className="text-sm text-gray-500">
         &copy; {new Date().getFullYear()} Ege Onder
       </p>

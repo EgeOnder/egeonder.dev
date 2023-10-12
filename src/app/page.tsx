@@ -6,7 +6,7 @@ import Writings from "~/components/writings";
 
 const Home = () => {
   return (
-    <main>
+    <main className="relative min-h-screen">
       <Navbar />
       <Separator className="mb-4" />
       <h1 className="text-xl font-bold">Writings</h1>
@@ -26,7 +26,7 @@ const Home = () => {
       <Separator className="my-4" />
 
       <h1 className="text-xl font-bold">Contact</h1>
-      <p className="text-sm text-gray-500">
+      <p className="pb-24 text-sm text-gray-500">
         You can reach me via{" "}
         <a
           href="mailto:me@egeonder.dev"
