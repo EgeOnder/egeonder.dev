@@ -11,7 +11,7 @@ const Home = () => {
       <Separator className="mb-4" />
       <h1 className="text-xl font-bold">Writings</h1>
       <p className="mb-2 text-sm text-gray-500">
-        I write about software development and design
+        I write about software development and design.
       </p>
 
       <Writings />
@@ -19,7 +19,7 @@ const Home = () => {
       <Separator className="my-4" />
 
       <h1 className="text-xl font-bold">Projects</h1>
-      <p className="mb-2 text-sm text-gray-500">I make things for the web</p>
+      <p className="mb-2 text-sm text-gray-500">I make things for the web.</p>
 
       <Projects />
 

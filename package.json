@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "with-env": "dotenv -e .env.local --",
+    "dev": "NODE_ENV=dev next dev",
+    "build": "NODE_ENV=prod next build",
+    "start": "NODE_ENV=prod next start",
+    "lint": "NODE_ENV=prod next lint",
+    "generate": "drizzle-kit generate:pg",
+    "up": "drizzle-kit up:pg"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.6.0",
@@ -21,6 +24,7 @@
     "lucide-react": "^0.244.0",
     "next": "13.4.5",
     "next-themes": "^0.2.1",
+    "pg": "^8.11.3",
     "postcss": "8.4.24",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -36,6 +40,7 @@
     "@types/react": "18.2.11",
     "@types/react-dom": "18.2.4",
     "@typescript-eslint/eslint-plugin": "^5.59.11",
+    "dotenv-cli": "^7.3.0",
     "drizzle-kit": "^0.19.5",
     "eslint": "8.42.0",
     "eslint-config-next": "13.4.5",

@@ -1,7 +1,7 @@
 import type { InferModel } from "drizzle-orm";
 import { pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
 
-const projects = pgTable("projects", {
+export const projects = pgTable("projects", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 32 }).notNull(),
   description: text("description").notNull(),
