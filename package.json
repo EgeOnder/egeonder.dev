@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "with-env": "dotenv -e .env.local --",
-    "dev": "NODE_ENV=dev next dev",
-    "build": "NODE_ENV=prod next build",
-    "start": "NODE_ENV=prod next start",
-    "lint": "NODE_ENV=prod next lint",
+    "dev": "NODE_ENV=development next dev",
+    "build": "NODE_ENV=production next build",
+    "start": "NODE_ENV=production next start",
+    "lint": "NODE_ENV=production next lint",
     "generate": "drizzle-kit generate:pg",
     "up": "drizzle-kit up:pg"
   },

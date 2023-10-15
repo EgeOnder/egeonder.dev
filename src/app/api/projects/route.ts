@@ -1,6 +1,7 @@
+import { z } from "zod";
 import { getProjects } from "~/db/lib/get-projects";
 import { postProject } from "~/db/lib/post-project";
-import type { Project } from "~/db/schema";
+import { removeProject } from "~/db/lib/remove-project";
 
 export const runtime = "edge";
 
@@ -14,11 +15,33 @@ export async function GET() {
   });
 }
 
+const projectSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  href: z.string().url(),
+});
+
 export async function POST(request: Request) {
   const body: unknown = await request.json();
 
-  // TODO: Validate body
-  await postProject(body as Project);
+  const payload = projectSchema.safeParse(body);
+
+  if (!payload.success) {
+    return new Response(
+      JSON.stringify({
+        message: "Invalid payload",
+        errors: payload.error,
+      }),
+      {
+        headers: {
+          "content-type": "application/json",
+        },
+        status: 400,
+      },
+    );
+  }
+
+  await postProject(payload.data);
 
   return new Response(
     JSON.stringify({
@@ -28,6 +51,46 @@ export async function POST(request: Request) {
       headers: {
         "content-type": "application/json",
       },
+      status: 200,
+    },
+  );
+}
+
+const projectRemoveSchema = z.object({
+  id: z.number(),
+});
+
+export async function DELETE(request: Request) {
+  const body: unknown = await request.json();
+
+  const payload = projectRemoveSchema.safeParse(body);
+
+  if (!payload.success) {
+    return new Response(
+      JSON.stringify({
+        message: "Invalid payload",
+        errors: payload.error,
+      }),
+      {
+        headers: {
+          "content-type": "application/json",
+        },
+        status: 400,
+      },
+    );
+  }
+
+  await removeProject(payload.data);
+
+  return new Response(
+    JSON.stringify({
+      message: "Project removed!",
+    }),
+    {
+      headers: {
+        "content-type": "application/json",
+      },
+      status: 200,
     },
   );
 }

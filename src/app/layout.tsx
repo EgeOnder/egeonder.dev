@@ -6,7 +6,7 @@ import { env } from "~/env.mjs";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: env.NODE_ENV === "dev" ? "Ege Onder - DEV" : "Ege Onder",
+  title: env.NODE_ENV === "development" ? "Ege Onder - DEV" : "Ege Onder",
   description: "This is where I have fun writing about stuff about the web.",
 };
 
