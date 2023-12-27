@@ -3,6 +3,7 @@ import { env } from "~/env.mjs";
 import type { JSXElementConstructor, ReactElement } from "react";
 import type { Meta } from "./get-posts-meta";
 import rehypePrettyCode from "rehype-pretty-code";
+import rehypeSlug from "rehype-slug";
 
 type BlogPost = {
   meta: Meta;
@@ -45,6 +46,7 @@ export async function getPostByName(fileName: string) {
               theme: "poimandres",
             },
           ],
+          rehypeSlug,
         ],
       },
     },

@@ -1,9 +1,18 @@
 import { getPostByName } from "~/lib/get-post-by-name";
 import { env } from "~/env.mjs";
 import Link from "next/link";
-import Image from "next/image";
-import tagSelectColor from "~/lib/tag-select-color";
 import type { Metadata } from "next";
+import { calculateDate } from "~/lib/calculate-date";
+import {
+  Tooltip,
+  TooltipProvider,
+  TooltipTrigger,
+  TooltipContent,
+} from "~/components/ui/tooltip";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import Tag from "~/components/tag";
+import Back from "~/components/back";
+import Breadcrumbs from "~/components/breadcrumbs";
 
 export async function generateMetadata({
   params: { id },
@@ -64,50 +73,63 @@ export default async function Post({ params: { id } }: Props) {
     month: "long",
     day: "numeric",
   });
+  const calculatedDate = calculateDate(publishDate);
 
   return (
     <div className="space-y-4">
-      <Link href="/blog" className="text-sm text-muted-foreground">
-        {"<-"} Back to posts
-      </Link>
+      <Back href="/blog" />
+      <Breadcrumbs
+        paths={[
+          {
+            path: "/",
+            name: "Home",
+          },
+          {
+            path: "/blog",
+            name: "Blog",
+          },
+          {
+            path: `/blog/${id}`,
+            name: meta.title,
+          },
+        ]}
+        className="mt-4"
+      />
       <div className="md:flex md:items-center md:justify-between">
         <h2 className="text-2xl font-bold">{meta.title}</h2>
-        <span className="text-sm text-muted-foreground">{formattedDate}</span>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="text-sm text-muted-foreground">
+                {formattedDate}
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>{calculatedDate}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       <div className="space-y-4 truncate md:flex md:items-center md:justify-between md:space-x-12 md:space-y-0">
         <div className="hide-scroll-bar flex space-x-3 overflow-x-scroll rounded-md md:max-w-[60%]">
-          {meta.tags.map((tag) => {
-            const colors = tagSelectColor(tag);
-
-            return (
-              <button
-                key={tag}
-                className={`rounded-lg px-2 py-1 text-sm ${colors.text.lightMode} dark:${colors.text.darkMode} ${colors.background.lightMode} dark:${colors.background.darkMode}`}
-              >
-                {tag}
-              </button>
-            );
-          })}
+          {meta.tags.map((tag) => (
+            <Tag tag={tag} key={tag} />
+          ))}
         </div>
         <Link
           target="_blank"
           href="https://github.com/EgeOnder/"
           className="flex cursor-pointer rounded-lg px-4 py-2 duration-150 hover:bg-secondary"
         >
-          <Image
-            src="/images/profile-pic.jpg"
-            width={40}
-            height={40}
-            className="h-10 w-10 rounded-full"
-            alt="Ege Onder"
-          />
+          <Avatar>
+            <AvatarImage src="/images/profile-pic.jpg" alt="Ege Onder" />
+            <AvatarFallback>EO</AvatarFallback>
+          </Avatar>
           <div className="ml-2">
             <p className="text-sm font-bold">Ege Onder</p>
             <p className="text-sm text-muted-foreground">Software Engineer</p>
           </div>
         </Link>
       </div>
-      <article className="prose pb-20 dark:prose-invert prose-headings:font-bold prose-h1:text-xl prose-h2:text-lg prose-a:font-normal prose-a:text-blue-600 prose-img:mx-auto">
+      <article className="prose pb-20 dark:prose-invert prose-headings:font-bold prose-h1:text-xl prose-h2:text-lg prose-a:font-normal prose-a:text-blue-600 prose-a:duration-150 hover:prose-a:text-blue-500 prose-img:mx-auto">
         {content}
       </article>
     </div>

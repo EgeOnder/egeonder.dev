@@ -26,7 +26,10 @@ export default async function Writings() {
           <div key={post.id} className="space-y-1">
             <div className="md:flex md:items-center md:justify-between">
               <div>
-                <Link href={"blog/" + post.id} className="font-bold underline">
+                <Link
+                  href={"blog/" + post.id + "?from=/"}
+                  className="font-bold underline"
+                >
                   {post.title}
                 </Link>
               </div>
