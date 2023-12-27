@@ -1,0 +1,42 @@
+---
+  name: Bug report
+  description: Create a report to help me improve
+  title: "[bug] <bug title>"
+  labels: bug
+  body:
+    - type: markdown
+      attributes:
+        value: |
+          ## Welcome to the bug report template!
+          Thanks for taking the time to file a bug report! Before you submit, please read the following:
+          - Search for your issue, to see if it has already been reported.
+          - Fill out the template below to the best of your ability.
+          - The more information you provide, the easier it will be for me to resolve your issue.
+    - type: textarea
+      attributes:
+        label: Checklist
+        description: |
+          Please check the following boxes before submitting your issue. Thanks!
+        value: |
+          - [ ] I'm using the latest version of the project.
+          - [ ] I have searched the [issues](https://github.com/EgeOnder/egeonder.dev/issues) and believe that this is not a duplicate.
+      validations:
+        required: true
+    - type: textarea
+      attributes:
+        label: Describe the bug
+        description: A clear and concise description of the bug, as well as what you expected to happen when encountering it.
+      validations:
+        required: true
+    - type: textarea
+      attributes:
+        label: To reproduce
+        description: Describe the steps on how to reproduce your bug.
+    - type: textarea
+      attributes:
+        label: Additional information
+        description: |
+          Add any other context about the problem here.
+          If applicable, add screenshots to help explain your problem.
+  ---
+  
