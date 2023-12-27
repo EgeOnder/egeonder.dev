@@ -6,7 +6,7 @@ import { Analytics } from "@vercel/analytics/react";
 import Container from "~/components/container";
 import { Separator } from "~/components/ui/separator";
 import Navbar from "~/components/navbar";
-import Footer from "~/components/footer";
+import { CommandMenu } from "~/components/command-menu";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,7 +29,9 @@ export default function RootLayout({
               <Navbar />
               <Separator className="mb-4" />
               <main>{children}</main>
-              <Footer />
+              <div className="fixed bottom-0 left-0 flex w-full justify-center border-t bg-background py-1">
+                <CommandMenu />
+              </div>
             </div>
           </Container>
         </ThemeProvider>

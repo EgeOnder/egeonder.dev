@@ -15,7 +15,7 @@ export default async function Blog() {
   const posts = await getPostsMeta();
 
   return (
-    <div>
+    <>
       <Back />
       <Breadcrumbs
         paths={[
@@ -43,6 +43,6 @@ export default async function Blog() {
       ) : (
         <BlogPosts posts={posts} />
       )}
-    </div>
+    </>
   );
 }

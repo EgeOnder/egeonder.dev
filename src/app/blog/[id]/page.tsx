@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import Tag from "~/components/tag";
 import Back from "~/components/back";
 import Breadcrumbs from "~/components/breadcrumbs";
+import { Skeleton } from "~/components/ui/skeleton";
 
 export async function generateMetadata({
   params: { id },
@@ -121,7 +122,9 @@ export default async function Post({ params: { id } }: Props) {
         >
           <Avatar>
             <AvatarImage src="/images/profile-pic.jpg" alt="Ege Onder" />
-            <AvatarFallback>EO</AvatarFallback>
+            <AvatarFallback>
+              <Skeleton />
+            </AvatarFallback>
           </Avatar>
           <div className="ml-2">
             <p className="text-sm font-bold">Ege Onder</p>
@@ -129,7 +132,7 @@ export default async function Post({ params: { id } }: Props) {
           </div>
         </Link>
       </div>
-      <article className="prose pb-20 dark:prose-invert prose-headings:font-bold prose-h1:text-xl prose-h2:text-lg prose-a:font-normal prose-a:text-blue-600 prose-a:duration-150 hover:prose-a:text-blue-500 prose-img:mx-auto">
+      <article className="prose pb-16 dark:prose-invert prose-headings:font-bold prose-h1:text-xl prose-h2:text-lg prose-a:font-normal prose-a:text-blue-600 prose-a:duration-150 hover:prose-a:text-blue-500 prose-img:mx-auto">
         {content}
       </article>
     </div>
