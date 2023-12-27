@@ -6,6 +6,11 @@ on:
   push:
     branches: ["main"]
 
+env:
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  BASE_URL: https://egeonder.dev/
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   build-lint:
     runs-on: ubuntu-latest
