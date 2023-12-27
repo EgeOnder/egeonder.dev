@@ -6,6 +6,7 @@ export const env = createEnv({
     DATABASE_URL: z.string(),
     NODE_ENV: z.enum(["development", "production", "test"]),
     BASE_URL: z.string(),
+    GITHUB_TOKEN: z.string(),
   },
   client: {},
   experimental__runtimeEnv: process.env,
