@@ -1,7 +1,6 @@
 import { ThemeProvider } from "~/components/theme-provider";
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { env } from "~/env.mjs";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import Container from "~/components/container";
@@ -12,7 +11,7 @@ import Footer from "~/components/footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: env.NODE_ENV === "development" ? "Ege Onder - DEV" : "Ege Onder",
+  title: "egeonder.dev",
   description: "This is where I have fun writing about stuff about the web.",
 };
 

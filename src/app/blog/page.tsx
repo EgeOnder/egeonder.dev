@@ -4,6 +4,11 @@ import { calculateDate } from "~/lib/calculate-date";
 import { getPostsMeta } from "~/lib/get-posts-meta";
 import tagSelectColor from "~/lib/tag-select-color";
 
+export const metadata = {
+  title: "Blog - egeonder.dev",
+  description: "This is where I have fun writing about stuff about the web.",
+};
+
 export const revalidate = env.NODE_ENV === "development" ? 0 : 86400;
 
 export default async function Blog() {

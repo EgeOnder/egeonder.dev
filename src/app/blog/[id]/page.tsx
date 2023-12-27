@@ -3,6 +3,30 @@ import { env } from "~/env.mjs";
 import Link from "next/link";
 import Image from "next/image";
 import tagSelectColor from "~/lib/tag-select-color";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params: { id },
+}: Props): Promise<Metadata> {
+  const post = await getPostByName(`${id}.mdx`);
+
+  if (!post) {
+    return {
+      title: "Not found - egeonder.dev",
+    };
+  }
+
+  const { meta } = post;
+
+  return {
+    title: `${meta.title} - egeonder.dev`,
+    description: meta.description,
+    authors: {
+      name: "Ege Onder",
+      url: "https://egeonder.dev",
+    },
+  };
+}
 
 export const revalidate = env.NODE_ENV === "development" ? 0 : 86400;
 
@@ -16,7 +40,21 @@ export default async function Post({ params: { id } }: Props) {
   const post = await getPostByName(`${id}.mdx`);
 
   if (!post) {
-    return <div>404 - Not found</div>;
+    return (
+      <div className="space-y-4">
+        <Link href="/blog" className="text-sm text-muted-foreground">
+          {"<-"} Back to posts
+        </Link>
+        <h1 className="text-xl font-bold">
+          Not here, but there is a lot of other stuff to read!
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          I couldn&apos;t find the post you are looking for, but there is a lot
+          of other stuff to read! You can check out the blog page to see all the
+          posts.
+        </p>
+      </div>
+    );
   }
 
   const { meta, content } = post;
