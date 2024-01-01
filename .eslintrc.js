@@ -9,6 +9,7 @@ const config = {
     "prettier",
   ],
   rules: {
+    "@typescript-eslint/no-empty-interface": "off",
     "@next/next/no-html-link-for-pages": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
     "@typescript-eslint/no-unused-vars": [

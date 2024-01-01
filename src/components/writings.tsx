@@ -3,7 +3,7 @@ import { env } from "~/env.mjs";
 import { calculateDate } from "~/lib/calculate-date";
 import { getPostsMeta } from "~/lib/get-posts-meta";
 
-export const revalidate = env.NODE_ENV === "development" ? 0 : 86400;
+export const revalidate = env.NODE_ENV === "development" ? 0 : 24000;
 
 export default async function Writings() {
   const posts = await getPostsMeta();

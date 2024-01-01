@@ -38,7 +38,7 @@ export async function generateMetadata({
   };
 }
 
-export const revalidate = env.NODE_ENV === "development" ? 0 : 86400;
+export const revalidate = env.NODE_ENV === "development" ? 0 : 24000;
 
 type Props = {
   params: {

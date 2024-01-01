@@ -8,7 +8,7 @@ export const metadata = {
   description: "This is where I have fun writing about stuff about the web.",
 };
 
-export const revalidate = env.NODE_ENV === "development" ? 0 : 86400;
+export const revalidate = env.NODE_ENV === "development" ? 0 : 24000;
 
 export default function ProjectsPage() {
   return (
