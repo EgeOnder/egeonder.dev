@@ -48,7 +48,7 @@ export default function BlogPosts({ posts }: { posts: Meta[] | undefined }) {
           const calculatedDate = calculateDate(publishDate);
 
           return (
-            <div key={post.id} className="space-y-4">
+            <div key={post.id} className="space-y-2">
               <div className="md:flex md:items-center md:justify-between">
                 <div>
                   <Link

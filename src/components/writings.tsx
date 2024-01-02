@@ -10,14 +10,14 @@ export default async function Writings() {
 
   if (!posts) {
     return (
-      <section className="flex flex-col space-y-4 py-4 text-muted-foreground">
+      <section className="flex flex-col space-y-4 text-muted-foreground">
         <p>No writings found.</p>
       </section>
     );
   }
 
   return (
-    <section className="flex flex-col space-y-4 py-4">
+    <section className="flex flex-col space-y-4">
       {posts.map((post) => {
         const publishDate = new Date(post.date);
         const calculatedDate = calculateDate(publishDate);
@@ -37,7 +37,7 @@ export default async function Writings() {
                 {calculatedDate}
               </span>
             </div>
-            <p className="text-sm text-muted-foreground">{post.description}</p>
+            <p className="text-md text-muted-foreground">{post.description}</p>
           </div>
         );
       })}

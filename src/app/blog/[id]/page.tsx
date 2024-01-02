@@ -118,7 +118,7 @@ export default async function Post({ params: { id } }: Props) {
         <Link
           target="_blank"
           href="https://github.com/EgeOnder/"
-          className="flex cursor-pointer rounded-lg px-4 py-2 duration-150 hover:bg-secondary"
+          className="flex cursor-pointer rounded-lg py-2 duration-150 hover:bg-secondary md:px-4"
         >
           <Avatar>
             <AvatarImage src="/images/profile-pic.jpg" alt="Ege Onder" />
@@ -132,7 +132,7 @@ export default async function Post({ params: { id } }: Props) {
           </div>
         </Link>
       </div>
-      <article className="prose pb-16 dark:prose-invert prose-headings:font-bold prose-h1:text-xl prose-h2:text-lg prose-a:font-normal prose-a:text-blue-600 prose-a:duration-150 hover:prose-a:text-blue-500 prose-img:mx-auto">
+      <article className="prose dark:prose-invert prose-headings:font-bold prose-h1:text-xl prose-h2:text-lg prose-a:font-normal prose-a:text-blue-600 prose-a:duration-150 hover:prose-a:text-blue-500 prose-img:mx-auto">
         {content}
       </article>
     </div>
