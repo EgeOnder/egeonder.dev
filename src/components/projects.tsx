@@ -1,6 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import { projects } from "~/app/projects/page";
+import { projects } from "~/lib/projects";
 import { calculateDate } from "~/lib/calculate-date";
 
 export default function Projects() {

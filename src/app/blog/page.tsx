@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import Back from "~/components/back";
 import BlogPosts from "~/components/blog-posts";
 import Breadcrumbs from "~/components/breadcrumbs";
+import { Skeleton } from "~/components/ui/skeleton";
 import { env } from "~/env.mjs";
 import { getPostsMeta } from "~/lib/get-posts-meta";
 
@@ -16,7 +18,9 @@ export default async function Blog() {
 
   return (
     <>
-      <Back />
+      <Suspense fallback={<Skeleton className="h-4 w-32" />}>
+        <Back />
+      </Suspense>
       <Breadcrumbs
         paths={[
           {
@@ -41,7 +45,9 @@ export default async function Blog() {
           <p>No writings found.</p>
         </section>
       ) : (
-        <BlogPosts posts={posts} />
+        <Suspense>
+          <BlogPosts posts={posts} />
+        </Suspense>
       )}
     </>
   );
