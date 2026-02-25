@@ -1,0 +1,88 @@
+---
+title: "Why you should not use a monorepo"
+description: "Monorepos are a popular way to manage multiple projects in a single repository. However, they can also create a lot of problems if not used carefully. In this blog post, I will share my experience with monorepos and why I think they are not always the best choice."
+date: "2026-02-25"
+readingTime: "9 min read"
+author: "Ege Onder"
+authorRole: "Software Engineer"
+authorAvatar: "/authors/ege-onder.png"
+image: "/blog/monorepo-blog-image.png"
+imageAlt: "Monorepo blog image"
+---
+
+We have all seen the thread. Someone on [X](https://x.com) posts a screenshot of their perfectly organized monorepo structure, and declares it the only sensible way to build modern software. The likes pile up, people agree. And suddenly, your team is migrating everything into a single repository because, clearly, this is how "real" engineering is done. I get the appeal. I really do. I too have been using monorepos in my projects for three years.
+
+Monorepos are becoming increasingly popular in the software development world. They promise a unified codebase, shared dependencies, and a great developer experience (especially with the newest tools available), and that satisfying feeling of `git clone` once and having everything you need. If you are building a suite of microservices that all speak the same language, or a web application with a clearly unified tech stack, monorepos can be genuinely good for your use-case.
+
+But there is a scenario that rarely makes it into the hype threads. It is the "just update one package" task that turns into a week of adventure. It is the moment you realize that your simple code-sharing architecture has created a rigid structure where touching one edge breaks the whole thing.
+
+## Chapter I: The concurrent dependency nightmare
+
+Imagine you are running a startup. You have a Next.js web application powering your dashboard and your marketing site, and an Expo mobile app. Being the efficient team that you are, you have structured this as a monorepo. Shared UI components, shared types, shared backend logic that both apps consume happily. It feels right.
+
+Then, the security alert hits.
+
+A critical vulnerability "[react2shell](https://react2shell.com/)" has been discovered in React. The fix is available in the newest version of React. Your web application, being customer-facing and handling sensitive data, needs this patch immediately. No questions asked, no delays tolerated.
+
+You naturally update React to the latest version. You have to. When you run `pnpm install`, everything looks fine. So, you test your web app, the vulnerability is patched, and you are relieved. This update should not break anything in your mobile app, right? After all, it is a simple vulnerability patch, not a major version upgrade. It should be fine.
+
+Here is where the monorepo structure stops being your friend and starts being your project manager.
+
+Because you are in a monorepo, you typically have a single root `node_modules` (or some kind of hoisted structure). Expo SDK 53, which your mobile team is using, has a hard dependency on React 19.0.0. The React Native version bundled with that Expo SDK does not support React 19.0.4. The vulnerability does not affect your mobile app—the attack vector is specific to server-side rendering features that React Native does not even use—but you are now stuck. You cannot patch your web application without breaking your mobile application.
+
+In a polyrepo world, this is not an issue. Your web team updates React, deploys the fix, and goes to bed. Your mobile team does not have to do anything, since they are not affected by this. But in your monorepo, these timelines are forcibly synchronized. You are now forced to choose between leaving a known vulnerability in production or embarking on an unplanned, week-long journey of trying to come up with a workaround that satisfies both your needs.
+
+Perhaps you are thinking, **"Okay, but that is just a temporary pain. The Expo team will definitely come up with a solution for my problems. A lot of people should be affected by this, and they will prioritize it."** Maybe. But I have been in this situation. And there might not be many people with your specific configuration. The Expo team is doing an amazing job, but they have to prioritize based on the needs of their entire user base. If your specific combination of dependencies is not common, you might find yourself waiting for a fix that is not high on their priority list. In the meantime, you are stuck with a vulnerable web application or a broken mobile application.
+
+## Chapter II: The domino effect
+
+Let's continue with your startup. You want to migrate your Tailwind CSS version from 3.x to 4.x, because the new performance improvements are genuinely impressive. You migrate your web app to use Tailwind v4.x (which in itself is a long task), and you are ready to deploy.
+
+But your mobile app uses NativeWind to share those Tailwind styles with React Native. You realize that in order to continue using NativeWind in your mobile application, you need a compatible version. So, naturally, you also update your current NativeWind version. You check, and the latest NativeWind version requires Expo SDK 54, which requires React Native 0.81. React Native 0.81 requires React 19.0.0, but wait—your web app just forced you to React 19.0.4 because of that security patch.
+
+Suddenly, updating a CSS utility framework requires you to:
+
+1. Upgrade Expo SDK
+2. Upgrade React Native
+3. Reconcile the React version conflict
+4. Debug why your Metro config is failing because React Native 0.81 introduced a breaking change in the Metro bundler.
+
+...
+
+17. Finally, deploy the new versions and hope nothing breaks in production.
+
+Welcome to the domino effect.
+
+What started as `pnpm install tailwindcss@latest` in one directory has become a cross-functional engineering sprint involving three different teams. The shared `packages/ui` library that was supposed to save you time is now the chokepoint preventing either app from moving forward independently.
+
+## Chapter III: The hidden tax of shared everything
+
+The pain extends beyond just version numbers. When your repositories are coupled, your teams are coupled.
+
+Your mobile developer cannot experiment with a new navigation library because it requires a React version that breaks the web app. Your backend developer cannot upgrade Node.js because the legacy web app requires an older runtime. Your "simple" shared utility library accumulates conditional logic—`if (isWeb) { ... } else { ... }`—until it becomes a monstrous abstraction layer that understands too much about too many platforms.
+
+The mental overhead adds up. Developers must maintain a working knowledge of the entire stack, not just their domain. The "works on my machine" syndrome gets worse because the surface area of "my machine" now includes two distinct runtime environments with conflicting needs.
+
+## Chapter IV: When monorepos actually win
+
+I want to be clear: I am not arguing that monorepos are universally bad. In fact, I would most definitely recommend monorepos if you have a specific structure that you want to enforce, and the benefits of sharing code and dependencies outweigh the costs of synchronization.
+
+Monorepos shine when your boundaries are truly unified. If you are building a suite of microservices all running on Node.js 20 with similar dependency trees, the sharing benefits exceed the coordination costs.
+
+They also make sense when the cost of inconsistency is higher than the cost of coordination. If you are a small team (2-3 developers) where everyone works on everything, the synchronization tax is negligible compared to the pain of managing multiple repositories and versioning schemes.
+
+## The pragmatic choice
+
+The problem is not the technology. The problem is the default thinking that "one repo equals simplicity." In reality, one repo equals **centralization**, which is only simple when the centralized repo has basic needs.
+
+Before you migrate to that monorepo structure, or configure your next project with a monorepo technology because someone with a blue checkmark posts its benefits, ask yourself:
+
+- Do my applications really need shared logic, or do they just share a business domain?
+- Can I afford to synchronize dependencies across mobile, web, and backend simultaneously?
+- What is the blast radius when I need to upgrade a framework in just one part of the system?
+
+If your web team and mobile team have different release cycles, different platform constraints, and different risk tolerances for dependency updates, forcing them into a single dependency graph is not engineering efficiency. It is creating a system with a single point of failure.
+
+Sometimes the smartest architecture is two folders in two different repos, with a shared package published to a private registry when you actually need to share code. The duplication of a few utility functions is a small price to pay for the autonomy to patch a vulnerability without breaking your entire product line.
+
+Choose the structure that fits your constraints, not the one that fits the current X trends. Your future self, debugging dependency resolution at 3 AM, will hate you.

@@ -1,0 +1,89 @@
+---
+title: "How I Reduced Database Load by 90% with Redis Caching"
+description: "Implementing a strategic Redis caching layer reduced my database queries by 90% and improved response times significantly. Here's the architectural approach."
+date: "2023-12-27"
+readingTime: "6 min read"
+author: "Ege Onder"
+authorRole: "Software Engineer"
+authorAvatar: "/authors/ege-onder.png"
+image: "/blog/redis-blog-image.png"
+imageAlt: "Redis caching architecture diagram"
+---
+
+While developing [kafeasist](https://kafeasist.com/), a multi-tenant restaurant management platform, I encountered significant performance bottlenecks during user authentication and company context switching. Operating on infrastructure free tiers to minimize costs, I noticed that repetitive database queries were creating substantial latency. The solution was implementing a comprehensive caching strategy using Redis, which reduced database calls by approximately 90% and dramatically improved response times.
+
+## Identifying the bottleneck
+
+**kafeasist** is a multi-tenant application where users manage multiple restaurant companies through a unified dashboard. Each company maintains isolated datasets: employees, inventory, orders, and analytics—that are fetched upon login or when switching contexts.
+
+Initially, the application queried the database directly for company data on every session initialization. Because this dataset is relatively static yet computationally expensive to aggregate, database logs revealed redundant queries for identical records. Hosting on [PlanetScale](https://planetscale.com/)'s free tier imposed connection and query limits, making this inefficiency operationally unsustainable.
+
+Rather than immediately upgrading to a paid tier, I optimized the existing architecture through strategic caching.
+
+## Caching strategy
+
+Caching stores frequently accessed data in high-speed, temporary memory, eliminating redundant database round-trips. For read-heavy workloads with infrequent mutations—such as company configuration data in a SaaS dashboard—caching provides significant latency reduction and database offload.
+
+## Technology Selection
+
+I evaluated in-memory key-value stores and selected [Redis](https://redis.io/) over alternatives like Memcached due to its robust data structure support and extensive ecosystem. For implementation, I utilized [@upstash/redis](https://www.npmjs.com/package/@upstash/redis), a serverless Redis client optimized for Node.js environments. [Upstash](https://upstash.com)'s serverless model offered a generous free tier with REST API access, eliminating connection management overhead while maintaining sub-millisecond latency.
+
+## Architectural abstraction
+
+To ensure maintainability and type safety across the codebase, I implemented a caching abstraction layer with the following responsibilities:
+
+- **Read operations**: Check cache first; fallback to database on miss, then hydrate cache
+- **Write operations**: Invalidate relevant cache keys on data mutation
+- **TTL management**: Configure expiration based on data volatility
+
+This abstraction ensured caching logic remained decoupled from business logic, enabling consistent patterns across different data entities.
+
+## Implementation
+
+The primary target was the company context fetch, which occurs on every authentication and organization switch. Using the abstraction layer, the implementation followed this pattern:
+
+```ts
+// Attempt to retrieve company data from cache
+const company = await cache.get<Company>(`company:${ctx.session.id}`);
+
+if (!company) {
+  // Cache miss: fetch from primary database
+  const companyData = await db.query.companies.findFirst({
+    where: eq(companies.id, ctx.session.companyId),
+  });
+
+  // Populate cache with 1-hour TTL
+  await cache.set(`company:${ctx.session.id}`, companyData, { ex: 3600 });
+
+  return companyData;
+}
+
+return company;
+```
+
+Cache invalidation occurred only when users modified company settings—an infrequent operation—ensuring data consistency without excessive complexity:
+
+```ts
+// Invalidate on company settings update
+await cache.del(`company:${ctx.session.id}`);
+```
+
+After applying this pattern to all read-heavy endpoints—particularly for reference data, product catalogs, and user permissions—the metrics showed substantial improvements.
+
+## Results
+
+The implementation yielded measurable performance gains:
+
+| Metric              | Before               | After              | Improvement         |
+| ------------------- | -------------------- | ------------------ | ------------------- |
+| Database Queries    | Baseline             | ~90% reduction     | Significant offload |
+| P95 Response Time   | 400ms                | 40ms               | 10x faster          |
+| Infrastructure Cost | Free tier (strained) | Free tier (stable) | No upgrade required |
+
+The most significant impact was perceived responsiveness during user navigation, where previously slow context switches became instantaneous.
+
+## Conclusion
+
+Implementing a Redis caching layer transformed kafeasist's performance without requiring immediate infrastructure investment. By reducing database load by 90%, I maintained the flexibility to remain on free tiers while delivering a snappy user experience that rivals paid-tier performance.
+
+**A special thanks to [Upstash](https://upstash.com)** for making this transition seamless. Their serverless Redis offering eliminated the operational complexity of managing cache clusters, while their SDK provided exceptional DX.
