@@ -7,6 +7,8 @@ import { SiteHeader } from "@/components/site-header";
 import { Glow } from "@/components/ui/glow";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { defaultMetadataRobots, defaultOpenGraphImage, defaultTwitterProfile, getMetadataBase, sharedKeywords, sharedMetadata } from "@/lib/metadata";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const overusedGrotesk = localFont({
   src: "../../public/fonts/OverusedGrotesk-VF.woff2",
@@ -96,6 +98,8 @@ export default function RootLayout({
               <Glow variant="center" className="-right-[35vw] top-2/3 w-[70vw] opacity-80" />
             </div>
             <TooltipProvider>
+              <Analytics />
+              <SpeedInsights />
               <main className="mx-auto md:w-3/4 w-7/8 pt-16">{children}</main>
             </TooltipProvider>
           </NavbarTitleProvider>
