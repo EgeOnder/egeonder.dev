@@ -10,14 +10,14 @@ export async function AboutText() {
   "use cache";
   cacheLife("days");
 
-  const highlightColorClassName = "rounded-[0.3em] px-px";
+  const highlightColorClassName = "rounded-[0.3em] px-px text-black/75";
   const highlightTransition = {
     type: "spring",
     duration: 1,
     delay: 0.4,
     bounce: 0,
   };
-  const highlightColor = "#F2AD91";
+  const highlightColor = "var(--accent-highlight)";
   const highlightUseInViewOptions = { once: true, initial: true, amount: 0.1 };
   return (
     <div className="space-y-4">

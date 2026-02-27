@@ -31,9 +31,7 @@ export function FancyPageNav({ className }: FancyPageNavProps) {
             href={link.href}
             className={cn(
               "rounded-full border px-3 py-1 text-xs tracking-[0.25em] backdrop-blur-md transition-colors",
-              active
-                ? "border-current bg-foreground text-background"
-                : "border-current/40 bg-background/20 text-current hover:border-current hover:bg-background/40",
+              active ? "border-current bg-foreground text-background" : "border-current/40 bg-background/20 text-current hover:border-current hover:bg-background/40",
             )}
           >
             {link.label}

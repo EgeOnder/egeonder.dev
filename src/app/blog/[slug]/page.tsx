@@ -13,6 +13,7 @@ import { cacheLife } from "next/cache";
 import { ReportView } from "./_components/report-view";
 import { getViews } from "@/lib/views";
 import { formatDate, formatViewCount, getInitials, isOlderThanOneYear } from "@/lib/utils";
+import { Footer } from "@/components/footer";
 
 type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
@@ -105,7 +106,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <header className="space-y-5 pb-2">
         <ViewTransition name={viewTransitionNames.image}>
           <div className="overflow-hidden rounded-2xl border bg-muted">
-            <Image src={imageSrc} alt={imageAlt} width={1200} height={675} priority className="h-auto w-full object-cover" />
+            <Image src={imageSrc} alt={imageAlt} width={1200} height={675} priority className="h-auto w-full object-cover dark:brightness-75" />
           </div>
         </ViewTransition>
         <ViewTransition name={viewTransitionNames.meta}>
@@ -143,6 +144,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         ) : null}
       </header>
       <Post />
+      <Footer />
     </article>
   );
 }

@@ -45,17 +45,11 @@ function assertBlogMetadata(metadata: unknown, slug: string): asserts metadata i
     throw new Error(`Invalid blog metadata for "${slug}": "readingTime" must be a string when provided.`);
   }
 
-  if (
-    record.tags !== undefined &&
-    (!Array.isArray(record.tags) || record.tags.some((tag) => typeof tag !== "string" || tag.trim().length === 0))
-  ) {
+  if (record.tags !== undefined && (!Array.isArray(record.tags) || record.tags.some((tag) => typeof tag !== "string" || tag.trim().length === 0))) {
     throw new Error(`Invalid blog metadata for "${slug}": "tags" must be an array of non-empty strings when provided.`);
   }
 
-  const optionalStringFields: Array<keyof Pick<
-    BlogMetadata,
-    "author" | "authorRole" | "authorAvatar"
-  >> = ["author", "authorRole", "authorAvatar"];
+  const optionalStringFields: Array<keyof Pick<BlogMetadata, "author" | "authorRole" | "authorAvatar">> = ["author", "authorRole", "authorAvatar"];
 
   for (const field of optionalStringFields) {
     if (record[field] !== undefined && typeof record[field] !== "string") {
@@ -102,9 +96,7 @@ function parseStringArray(value: string, slug: string, field: string): string[] 
       return parseQuotedString(part, slug, field);
     }
 
-    throw new Error(
-      `Invalid blog metadata for "${slug}": "${field}" items must be quoted strings (for example ['redis', 'backend']).`,
-    );
+    throw new Error(`Invalid blog metadata for "${slug}": "${field}" items must be quoted strings (for example ['redis', 'backend']).`);
   });
 }
 

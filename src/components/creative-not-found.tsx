@@ -139,7 +139,7 @@ export function CreativeNotFound({ imageAlt = "404 visual", imageSrc, className 
                 transition={{ delay: 0.15, duration: 0.35 }}
                 className="mb-2 inline-flex items-center gap-2 rounded-full border border-border/70 bg-muted/40 px-3 py-1.5 font-mono text-xs w-fit"
               >
-                <RadarIcon className="size-3.5 text-orange-600 dark:text-orange-300" />
+                <RadarIcon className="size-3.5" style={{ color: "var(--accent-logo)" }} />
                 {copy.code}
               </motion.p>
 

@@ -1,10 +1,13 @@
 import { ExternalLinkIcon } from "lucide-react";
 import { isValidElement, type ComponentPropsWithoutRef, type ReactNode } from "react";
 import type { MDXComponents } from "mdx/types";
-import { bundledLanguages, type BundledLanguage, codeToHtml, type ThemeRegistrationAny, BundledTheme, StringLiteralUnion } from "shiki";
+import { bundledLanguages, type BundledLanguage, codeToHtml } from "shiki";
 import Image from "next/image";
 
-const CODE_THEME: ThemeRegistrationAny | StringLiteralUnion<BundledTheme, string> = "github-light";
+const CODE_THEMES = {
+  light: "github-light",
+  dark: "github-dark",
+} as const;
 
 type CodeElementProps = {
   className?: string;
@@ -70,7 +73,7 @@ async function CodeBlock({ children, ...props }: ComponentPropsWithoutRef<"pre">
 
   const html = await codeToHtml(codeSnippet.code, {
     lang: codeSnippet.language,
-    theme: CODE_THEME,
+    themes: CODE_THEMES,
   });
 
   return <div className="mb-4 overflow-x-auto rounded-xl border [&_pre]:m-0! [&_pre]:p-4! [&_pre]:text-sm [&_pre]:leading-relaxed" dangerouslySetInnerHTML={{ __html: html }} />;
@@ -115,7 +118,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         </code>
       );
     },
-    img: ({ alt, src, ...props }) => <Image src={src} alt={alt} width={1200} height={675} priority className="h-auto w-full object-cover overflow-hidden rounded-2xl border" {...props} />,
+    img: ({ alt, src, ...props }) => (
+      <Image src={src} alt={alt} width={1200} height={675} priority className="h-auto w-full object-cover overflow-hidden rounded-2xl border dark:brightness-75" {...props} />
+    ),
     ul: ({ children, ...props }) => (
       <ul className="list-disc list-inside mb-4" {...props}>
         {children}

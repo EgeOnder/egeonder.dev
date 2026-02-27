@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { GithubLogoIcon, LinkedinLogoIcon, MailboxIcon } from "@phosphor-icons/react/ssr";
 import Link from "next/link";
 
@@ -24,11 +25,16 @@ export function SocialsSection() {
   return (
     <div className="flex items-center space-x-4">
       {SOCIALS.map((social) => (
-        <Link key={social.name} href={social.href} target="_blank" rel="noopener noreferrer">
-          <Button variant="ghost" size="icon">
-            {social.icon}
-          </Button>
-        </Link>
+        <Tooltip key={social.name}>
+          <TooltipTrigger>
+            <Link href={social.href} target="_blank" rel="noopener noreferrer">
+              <Button variant="ghost" size="icon">
+                {social.icon}
+              </Button>
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent>{social.name}</TooltipContent>
+        </Tooltip>
       ))}
     </div>
   );

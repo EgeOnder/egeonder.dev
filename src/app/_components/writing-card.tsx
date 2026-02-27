@@ -10,20 +10,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ViewTransition } from "react";
 
-export function WritingCard({
-  slug,
-  title,
-  description,
-  date,
-  readingTime,
-}: {
-  slug: string;
-  title: string;
-  description: string;
-  date: string;
-  readingTime?: string;
-  author?: string;
-}) {
+export function WritingCard({ slug, title, description, date, readingTime }: { slug: string; title: string; description: string; date: string; readingTime?: string; author?: string }) {
   const href = `/blog/${slug}`;
   const imageSrc = `/blog/${slug}/thumbnail.png`;
   const imageAlt = `${title} Thumbnail`;
@@ -122,7 +109,7 @@ export function WritingCard({
           <ViewTransition name={viewTransitionNames.image}>
             <div className="w-full max-w-sm">
               <AspectRatio ratio={16 / 9} className="bg-muted w-full rounded-xl">
-                <Image src={imageSrc} alt={imageAlt} fill className="rounded-xl object-cover dark:brightness-20 border" />
+                <Image src={imageSrc} alt={imageAlt} fill className="rounded-xl object-cover dark:brightness-75 border" />
               </AspectRatio>
             </div>
           </ViewTransition>

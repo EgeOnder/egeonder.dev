@@ -20,7 +20,7 @@ export function getBrandLogoSvgMarkup({ color = "#ca3500", size = 35 }: BrandLog
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${BRAND_LOGO_VIEWBOX}" width="${size}" height="${size}"><defs><path id="petal" d="${BRAND_LOGO_PETAL_PATH}" fill="${color}" /></defs><use href="#petal" />${rotatedPetals}</svg>`;
 }
 
-export function BrandLogo({ color = "#ca3500", size = 35, width, height, ...props }: BrandLogoProps) {
+export function BrandLogo({ color = "var(--accent-logo, #ca3500)", size = 35, width, height, ...props }: BrandLogoProps) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox={BRAND_LOGO_VIEWBOX} width={width ?? size} height={height ?? size} {...props}>
       <defs>

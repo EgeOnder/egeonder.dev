@@ -1,5 +1,5 @@
+import { Footer } from "@/components/footer";
 import { AboutText } from "./_components/about-text";
-import { SocialsSection } from "./_components/socials-section";
 import { WritingsSection } from "./_components/writings-section";
 
 export default async function Page() {
@@ -7,7 +7,7 @@ export default async function Page() {
     <div className="space-y-8 pt-4 pb-12">
       <AboutText />
       <WritingsSection limit={3} />
-      <SocialsSection />
+      <Footer />
     </div>
   );
 }

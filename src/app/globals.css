@@ -53,6 +53,10 @@
 :root {
   --background: oklch(1 0 0);
   --select: oklch(0.6724 0.1308 38.76 / 50.2%);
+  --accent-highlight: #f2ad91;
+  --accent-logo: #ca3500;
+  --accent-glow-primary-rgb: 249 115 22;
+  --accent-glow-secondary-rgb: 251 146 60;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
   --popover: oklch(1 0 0);
@@ -86,6 +90,38 @@
   --background-from: oklch(1 0 0);
   --background-to: oklch(97% 0.013 40.833);
   --foreground: oklch(0.141 0.005 285.823);
+}
+
+:root[data-accent-theme="pastel-orange"] {
+  --select: oklch(0.7824 0.0738 45.76 / 58%);
+  --accent-highlight: #f2ad91;
+  --accent-logo: #ca3500;
+  --accent-glow-primary-rgb: 249 115 22;
+  --accent-glow-secondary-rgb: 251 146 60;
+}
+
+:root[data-accent-theme="pastel-green"] {
+  --select: oklch(0.844 0.068 151.3 / 58%);
+  --accent-highlight: #bde6cc;
+  --accent-logo: #3c8b67;
+  --accent-glow-primary-rgb: 127 199 160;
+  --accent-glow-secondary-rgb: 168 221 192;
+}
+
+:root[data-accent-theme="pastel-blue"] {
+  --select: oklch(0.83 0.062 246.8 / 58%);
+  --accent-highlight: #bedcf5;
+  --accent-logo: #447da8;
+  --accent-glow-primary-rgb: 130 186 223;
+  --accent-glow-secondary-rgb: 176 212 236;
+}
+
+:root[data-accent-theme="pastel-purple"] {
+  --select: oklch(0.842 0.062 311.2 / 58%);
+  --accent-highlight: #ddcbf2;
+  --accent-logo: #8260ac;
+  --accent-glow-primary-rgb: 174 143 208;
+  --accent-glow-secondary-rgb: 204 183 231;
 }
 
 .dark {
@@ -149,6 +185,31 @@
 
 .animate-background-gradient {
   animation: background-gradient 5s infinite ease-in-out;
+}
+
+.theme-glow-primary {
+  background: radial-gradient(
+    ellipse at center,
+    rgb(var(--accent-glow-primary-rgb) / 0.14) 10%,
+    rgb(var(--accent-glow-primary-rgb) / 0) 45%
+  );
+}
+
+.theme-glow-secondary {
+  background: radial-gradient(
+    ellipse at center,
+    rgb(var(--accent-glow-secondary-rgb) / 0.14) 5%,
+    rgb(var(--accent-glow-secondary-rgb) / 0) 10%
+  );
+}
+
+.dark .shiki.shiki-themes {
+  background-color: var(--shiki-dark-bg) !important;
+  color: var(--shiki-dark) !important;
+}
+
+.dark .shiki.shiki-themes span {
+  color: var(--shiki-dark) !important;
 }
 
 @keyframes perimeter-glow {

@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 
 import "./globals.css";
+import { AccentThemeProvider } from "@/components/accent-theme-provider";
 import { NavbarTitleProvider } from "@/components/navbar-title-context";
 import { SiteHeader } from "@/components/site-header";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Glow } from "@/components/ui/glow";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { defaultMetadataRobots, defaultOpenGraphImage, defaultTwitterProfile, getMetadataBase, sharedKeywords, sharedMetadata } from "@/lib/metadata";
@@ -88,22 +90,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${overusedGrotesk.variable} ${calendasPlus.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${overusedGrotesk.variable} ${calendasPlus.variable}`}>
       <body className={`${overusedGrotesk.variable} ${calendasPlus.variable} antialiased relative min-h-dvh overflow-x-hidden`}>
-        <div className="relative z-10">
-          <NavbarTitleProvider>
-            <SiteHeader />
-            <div aria-hidden className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
-              <Glow variant="center" className="-left-[35vw] top-1/3 w-[70vw] opacity-80" />
-              <Glow variant="center" className="-right-[35vw] top-2/3 w-[70vw] opacity-80" />
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <AccentThemeProvider>
+            <div className="relative z-10">
+              <NavbarTitleProvider>
+                <SiteHeader />
+                <div aria-hidden className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+                  <Glow variant="center" className="-left-[35vw] top-1/3 w-[70vw] opacity-80" />
+                  <Glow variant="center" className="-right-[35vw] top-2/3 w-[70vw] opacity-80" />
+                </div>
+                <TooltipProvider>
+                  <Analytics />
+                  <SpeedInsights />
+                  <main className="mx-auto md:w-3/4 w-7/8 pt-16">{children}</main>
+                </TooltipProvider>
+              </NavbarTitleProvider>
             </div>
-            <TooltipProvider>
-              <Analytics />
-              <SpeedInsights />
-              <main className="mx-auto md:w-3/4 w-7/8 pt-16">{children}</main>
-            </TooltipProvider>
-          </NavbarTitleProvider>
-        </div>
+          </AccentThemeProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

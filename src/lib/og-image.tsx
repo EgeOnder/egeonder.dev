@@ -47,7 +47,7 @@ function OgImageFrame({ children, bodyPaddingTop = 0, hasSansFont }: OgImageFram
             height: 76,
           }}
         >
-          <BrandLogo />
+          <BrandLogo color="#ca3500" />
           <span style={{ marginLeft: 12, fontSize: 34, letterSpacing: -0.6 }}>egeonder.dev</span>
         </div>
 

@@ -2,11 +2,48 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
+import { LaptopMinimalIcon, MoonStarIcon, SunIcon } from "lucide-react";
+import { useTheme } from "next-themes";
 import { useRef, useState } from "react";
 
 import { useNavbarTitle } from "@/components/navbar-title-context";
 import { MenuIcon, type MenuIconHandle } from "@/components/ui/menu";
 import CenterUnderline from "./ui/underline-center";
+
+const THEME_MODE_ORDER = ["light", "dark", "system"] as const;
+
+type ThemeMode = (typeof THEME_MODE_ORDER)[number];
+
+function isThemeMode(value: string | undefined): value is ThemeMode {
+  return value === "light" || value === "dark" || value === "system";
+}
+
+function ThemeModeToggle() {
+  const { theme, setTheme } = useTheme();
+  const currentMode: ThemeMode = isThemeMode(theme) ? theme : "system";
+  const currentModeIndex = THEME_MODE_ORDER.indexOf(currentMode);
+  const nextMode = THEME_MODE_ORDER[(currentModeIndex + 1) % THEME_MODE_ORDER.length];
+
+  return (
+    <motion.button
+      type="button"
+      whileHover={{ scale: 1.07 }}
+      whileTap={{ scale: 0.94 }}
+      transition={{ type: "spring", stiffness: 330, damping: 24 }}
+      onClick={() => setTheme(nextMode)}
+      aria-label={`Theme mode is ${currentMode}. Switch to ${nextMode}.`}
+      className="flex h-8 w-8 items-center justify-center text-foreground"
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span key={currentMode} initial={{ opacity: 0, y: 6, rotate: -8 }} animate={{ opacity: 1, y: 0, rotate: 0 }} exit={{ opacity: 0, y: -6, rotate: 8 }} transition={{ duration: 0.1 }}>
+          {currentMode === "light" ? <SunIcon className="size-4" /> : null}
+          {currentMode === "dark" ? <MoonStarIcon className="size-4" /> : null}
+          {currentMode === "system" ? <LaptopMinimalIcon className="size-4" /> : null}
+        </motion.span>
+      </AnimatePresence>
+    </motion.button>
+  );
+}
 
 export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -38,7 +75,9 @@ export function SiteHeader() {
       <nav className="fixed left-0 right-0 top-0 z-50 h-16 bg-transparent backdrop-blur-md">
         <div className="mx-auto flex h-full w-7/8 items-center justify-between md:w-3/4">
           <Link href="/" className="flex min-w-0 cursor-pointer select-none items-center gap-2" prefetch>
-            <span className="mt-0.5 text-orange-700">✽</span>
+            <span className="mt-0.5" style={{ color: "var(--accent-logo)" }}>
+              ✽
+            </span>
             <span className="block h-7 max-w-[min(62vw,32rem)] overflow-hidden">
               <AnimatePresence initial={false} mode="wait">
                 <motion.span
@@ -54,9 +93,12 @@ export function SiteHeader() {
               </AnimatePresence>
             </span>
           </Link>
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.99 }} transition={{ type: "spring", stiffness: 320, damping: 24 }}>
-            <MenuIcon ref={menuIconRef} className="cursor-pointer" onClick={toggleMenuIcon} size={20} />
-          </motion.div>
+          <div className="flex items-center gap-2">
+            <ThemeModeToggle />
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.99 }} transition={{ type: "spring", stiffness: 320, damping: 24 }}>
+              <MenuIcon ref={menuIconRef} className="cursor-pointer" onClick={toggleMenuIcon} size={20} />
+            </motion.div>
+          </div>
         </div>
       </nav>
 
