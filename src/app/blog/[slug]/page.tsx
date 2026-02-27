@@ -5,8 +5,9 @@ import { ViewTransition } from "react";
 
 import { BlogNavbarTitleSync } from "@/app/blog/[slug]/_components/blog-navbar-title-sync";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getBlogPostModule, getBlogSlugs } from "@/lib/blog";
+import { getBlogPostModule, getBlogSlugs, getBlogThumbnailAlt, getBlogThumbnailSrc } from "@/lib/blog";
 import { getBlogViewTransitionNames } from "@/lib/blog-view-transition";
+import { defaultMetadataRobots, defaultTwitterProfile, sharedKeywords, sharedMetadata } from "@/lib/metadata";
 import { cacheLife } from "next/cache";
 
 import { ReportView } from "./_components/report-view";
@@ -33,9 +34,49 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     return {};
   }
 
+  const canonicalPath = `/blog/${slug}`;
+  const socialImage = getBlogThumbnailSrc(slug);
+  const socialImageAlt = getBlogThumbnailAlt(blogPost.metadata.title);
+  const authorName = blogPost.metadata.author?.trim();
+  const openGraphImage = {
+    url: socialImage,
+    alt: socialImageAlt,
+  };
+
   return {
     title: blogPost.metadata.title,
     description: blogPost.metadata.description,
+    keywords: [...sharedKeywords, ...(blogPost.metadata.tags ?? [])],
+    robots: defaultMetadataRobots,
+    category: "technology",
+    authors: [{ name: authorName || sharedMetadata.authorName }],
+    creator: sharedMetadata.authorName,
+    publisher: sharedMetadata.authorName,
+    alternates: {
+      canonical: canonicalPath,
+    },
+    openGraph: {
+      type: "article",
+      url: canonicalPath,
+      title: blogPost.metadata.title,
+      description: blogPost.metadata.description,
+      siteName: sharedMetadata.title,
+      locale: sharedMetadata.locale,
+      publishedTime: blogPost.metadata.date,
+      authors: authorName ? [authorName] : [sharedMetadata.authorName],
+      tags: blogPost.metadata.tags,
+      images: [openGraphImage],
+    },
+    twitter: {
+      ...defaultTwitterProfile,
+      card: "summary_large_image",
+      title: blogPost.metadata.title,
+      description: blogPost.metadata.description,
+      images: [socialImage],
+    },
+    other: {
+      pinterest: "nopin",
+    },
   };
 }
 
@@ -54,20 +95,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const publishedDate = formatDate(blogPost.metadata.date);
   const isOlderPost = isOlderThanOneYear(blogPost.metadata.date);
   const authorName = blogPost.metadata.author?.trim();
-  const imageAlt = blogPost.metadata.imageAlt ?? blogPost.metadata.title;
+  const imageSrc = getBlogThumbnailSrc(slug);
+  const imageAlt = getBlogThumbnailAlt(blogPost.metadata.title);
 
   return (
     <article className="mx-auto max-w-3xl pb-16 space-y-8">
       <ReportView slug={slug} />
       <BlogNavbarTitleSync title={blogPost.metadata.title} />
       <header className="space-y-5 pb-2">
-        {blogPost.metadata.image ? (
-          <ViewTransition name={viewTransitionNames.image}>
-            <div className="overflow-hidden rounded-2xl border bg-muted">
-              <Image src={blogPost.metadata.image} alt={imageAlt} width={1200} height={675} priority className="h-auto w-full object-cover" />
-            </div>
-          </ViewTransition>
-        ) : null}
+        <ViewTransition name={viewTransitionNames.image}>
+          <div className="overflow-hidden rounded-2xl border bg-muted">
+            <Image src={imageSrc} alt={imageAlt} width={1200} height={675} priority className="h-auto w-full object-cover" />
+          </div>
+        </ViewTransition>
         <ViewTransition name={viewTransitionNames.meta}>
           <p className="text-sm text-muted-foreground">
             {publishedDate}

@@ -1,9 +1,10 @@
 import { ExternalLinkIcon } from "lucide-react";
 import { isValidElement, type ComponentPropsWithoutRef, type ReactNode } from "react";
 import type { MDXComponents } from "mdx/types";
-import { bundledLanguages, type BundledLanguage, codeToHtml } from "shiki";
+import { bundledLanguages, type BundledLanguage, codeToHtml, type ThemeRegistrationAny, BundledTheme, StringLiteralUnion } from "shiki";
+import Image from "next/image";
 
-const CODE_THEME = "github-light";
+const CODE_THEME: ThemeRegistrationAny | StringLiteralUnion<BundledTheme, string> = "github-light";
 
 type CodeElementProps = {
   className?: string;
@@ -46,7 +47,7 @@ function toPlainText(node: ReactNode): string {
 }
 
 function extractCodeSnippet(children: ReactNode): CodeSnippet | null {
-  if (!isValidElement<CodeElementProps>(children) || children.type !== "code") {
+  if (!isValidElement<CodeElementProps>(children)) {
     return null;
   }
 
@@ -61,7 +62,7 @@ async function CodeBlock({ children, ...props }: ComponentPropsWithoutRef<"pre">
 
   if (!codeSnippet) {
     return (
-      <pre className="rounded-xl border bg-muted p-4 overflow-x-auto mb-4" {...props}>
+      <pre className="rounded-xl border bg-transparent backdrop-blur-md p-4 overflow-x-auto mb-4" {...props}>
         {children}
       </pre>
     );
@@ -99,11 +100,22 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       </a>
     ),
     pre: CodeBlock,
-    code: ({ children, ...props }) => (
-      <code className="bg-muted rounded px-1 py-0.5 text-sm font-mono" {...props}>
-        {children}
-      </code>
-    ),
+    code: ({ children, className, ...props }) => {
+      if (parseLanguage(className) !== "text") {
+        return (
+          <code className={className} {...props}>
+            {children}
+          </code>
+        );
+      }
+
+      return (
+        <code className="bg-muted rounded px-1 py-0.5 text-sm font-mono" {...props}>
+          {children}
+        </code>
+      );
+    },
+    img: ({ alt, src, ...props }) => <Image src={src} alt={alt} width={1200} height={675} priority className="h-auto w-full object-cover overflow-hidden rounded-2xl border" {...props} />,
     ul: ({ children, ...props }) => (
       <ul className="list-disc list-inside mb-4" {...props}>
         {children}
@@ -121,7 +133,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
     table: ({ children, ...props }) => (
       <div className="mb-6 w-full overflow-x-auto rounded-xl border border-border/80">
-        <table className="w-full min-w-[36rem] border-collapse text-left text-base [&_tbody_tr:nth-child(odd)]:bg-muted/20" {...props}>
+        <table className="w-full min-w-xl border-collapse text-left text-base [&_tbody_tr:nth-child(odd)]:bg-muted/20" {...props}>
           {children}
         </table>
       </div>

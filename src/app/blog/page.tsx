@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import { WritingsSection } from "@/app/_components/writings-section";
@@ -15,11 +14,6 @@ type BlogPageProps = {
     q?: string | string[];
     page?: string | string[];
   }>;
-};
-
-export const metadata: Metadata = {
-  title: "Blog — egeonder.dev",
-  description: "All writings and blog posts published on egeonder.dev.",
 };
 
 export default function BlogPage({ searchParams }: BlogPageProps) {

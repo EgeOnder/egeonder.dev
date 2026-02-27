@@ -1,13 +1,11 @@
 ---
-title: "How I Reduced Database Load by 90% with Redis Caching"
+title: "How I reduced database load by 90% with Redis caching"
 description: "Implementing a strategic Redis caching layer reduced my database queries by 90% and improved response times significantly. Here's the architectural approach."
 date: "2023-12-27"
 readingTime: "6 min read"
 author: "Ege Onder"
-authorRole: "Software Engineer"
+authorRole: "Software engineer"
 authorAvatar: "/authors/ege-onder.png"
-image: "/blog/redis-blog-image.png"
-imageAlt: "Redis caching architecture diagram"
 ---
 
 While developing [kafeasist](https://kafeasist.com/), a multi-tenant restaurant management platform, I encountered significant performance bottlenecks during user authentication and company context switching. Operating on infrastructure free tiers to minimize costs, I noticed that repetitive database queries were creating substantial latency. The solution was implementing a comprehensive caching strategy using Redis, which reduced database calls by approximately 90% and dramatically improved response times.

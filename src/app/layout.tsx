@@ -6,6 +6,7 @@ import { NavbarTitleProvider } from "@/components/navbar-title-context";
 import { SiteHeader } from "@/components/site-header";
 import { Glow } from "@/components/ui/glow";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { defaultMetadataRobots, defaultOpenGraphImage, defaultTwitterProfile, getMetadataBase, sharedKeywords, sharedMetadata } from "@/lib/metadata";
 
 const overusedGrotesk = localFont({
   src: "../../public/fonts/OverusedGrotesk-VF.woff2",
@@ -18,16 +19,64 @@ const calendasPlus = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "egeonder.dev",
-  description: "egeonder.dev",
-  icons: {
-    icon: [
-      { url: "/favicon.ico" },
+  metadataBase: getMetadataBase(),
+  applicationName: sharedMetadata.title,
+  title: {
+    default: sharedMetadata.title,
+    template: `%s — ${sharedMetadata.title}`,
+  },
+  description: sharedMetadata.description,
+  referrer: "origin-when-cross-origin",
+  keywords: [...sharedKeywords],
+  authors: [{ name: sharedMetadata.authorName, url: sharedMetadata.siteUrl }],
+  creator: sharedMetadata.authorName,
+  publisher: sharedMetadata.authorName,
+  category: "technology",
+  classification: "Personal website and engineering blog",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  robots: defaultMetadataRobots,
+  alternates: {
+    canonical: "/",
+    languages: {
+      "en-US": "/",
+    },
+  },
+  openGraph: {
+    title: sharedMetadata.title,
+    description: sharedMetadata.description,
+    type: "website",
+    url: "/",
+    siteName: sharedMetadata.title,
+    locale: sharedMetadata.locale,
+    images: [
       {
-        url: "/favicon-dark.ico",
-        media: "(prefers-color-scheme: dark)",
+        ...defaultOpenGraphImage,
       },
     ],
+  },
+  twitter: {
+    ...defaultTwitterProfile,
+    card: "summary_large_image",
+    title: sharedMetadata.title,
+    description: sharedMetadata.description,
+    images: ["/twitter-image"],
+  },
+  icons: {
+    icon: [
+      { url: "/icon", media: "(prefers-color-scheme: light)", type: "image/svg+xml" },
+      {
+        url: "/icon1",
+        media: "(prefers-color-scheme: dark)",
+        type: "image/svg+xml",
+      },
+    ],
+  },
+  other: {
+    pinterest: "nopin",
   },
 };
 

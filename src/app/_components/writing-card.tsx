@@ -16,7 +16,6 @@ export function WritingCard({
   description,
   date,
   readingTime,
-  image,
 }: {
   slug: string;
   title: string;
@@ -24,9 +23,10 @@ export function WritingCard({
   date: string;
   readingTime?: string;
   author?: string;
-  image?: string;
 }) {
   const href = `/blog/${slug}`;
+  const imageSrc = `/blog/${slug}/thumbnail.png`;
+  const imageAlt = `${title} Thumbnail`;
   const viewTransitionNames = getBlogViewTransitionNames(slug);
   const iconRef = useRef<React.ElementRef<typeof ArrowRightIcon>>(null);
   const metaRowRef = useRef<HTMLDivElement>(null);
@@ -122,7 +122,7 @@ export function WritingCard({
           <ViewTransition name={viewTransitionNames.image}>
             <div className="w-full max-w-sm">
               <AspectRatio ratio={16 / 9} className="bg-muted w-full rounded-xl">
-                {image ? <Image src={image} alt={title} fill className="rounded-xl object-cover dark:brightness-20 border" /> : <div className="h-full w-full rounded-xl border bg-muted" />}
+                <Image src={imageSrc} alt={imageAlt} fill className="rounded-xl object-cover dark:brightness-20 border" />
               </AspectRatio>
             </div>
           </ViewTransition>

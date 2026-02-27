@@ -4,14 +4,11 @@ import { Online } from "./online";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cacheLife } from "next/cache";
+import { calculateAge } from "@/lib/calculate-age";
 
 export async function AboutText() {
   "use cache";
   cacheLife("days");
-
-  const birthDate = new Date("2003-08-19");
-  const today = new Date();
-  const age = today.getFullYear() - birthDate.getFullYear() - (today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate()) ? 1 : 0);
 
   const highlightColorClassName = "rounded-[0.3em] px-px";
   const highlightTransition = {
@@ -28,7 +25,7 @@ export async function AboutText() {
         <Online />
       </Suspense>
       <p className="text-xl">
-        A {age} year old curious developer. Currently working on{" "}
+        A {calculateAge()} year old curious developer. Currently working on{" "}
         <TextHighlighter className={highlightColorClassName} transition={highlightTransition as Transition} highlightColor={highlightColor} useInViewOptions={highlightUseInViewOptions}>
           kafeasist
         </TextHighlighter>

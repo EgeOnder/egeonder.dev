@@ -6,7 +6,7 @@ const stripYamlFrontmatterPluginPath = path.join(process.cwd(), "src/lib/mdx/str
 
 const withMDX = createMDX({
   options: {
-    remarkPlugins: [stripYamlFrontmatterPluginPath],
+    remarkPlugins: ["remark-gfm", stripYamlFrontmatterPluginPath],
   },
 });
 

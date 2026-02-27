@@ -29,7 +29,7 @@ export async function WritingsSection({ title = "Latest writings", limit, showVi
         <h2 className="text-2xl font-bold">{title}</h2>
         {shouldShowViewAll && (
           <motion.div whileTap={{ scale: 0.98 }} transition={{ type: "spring", stiffness: 320, damping: 24 }}>
-            <Link href="/blog">
+            <Link href="/blog" prefetch>
               <UnderlineCenter>View all</UnderlineCenter>
             </Link>
           </motion.div>
@@ -39,14 +39,7 @@ export async function WritingsSection({ title = "Latest writings", limit, showVi
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {visiblePosts.map((post) => (
             <Suspense key={post.slug} fallback={<div className="h-48 bg-muted rounded-xl animate-pulse w-full" />}>
-              <WritingCard
-                slug={post.slug}
-                title={post.metadata.title}
-                description={post.metadata.description}
-                date={formatDate(post.metadata.date)}
-                readingTime={post.metadata.readingTime}
-                image={post.metadata.image}
-              />
+              <WritingCard slug={post.slug} title={post.metadata.title} description={post.metadata.description} date={formatDate(post.metadata.date)} readingTime={post.metadata.readingTime} />
             </Suspense>
           ))}
         </div>

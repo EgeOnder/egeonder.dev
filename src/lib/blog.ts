@@ -15,8 +15,6 @@ export type BlogMetadata = {
   author?: string;
   authorRole?: string;
   authorAvatar?: string;
-  image?: string;
-  imageAlt?: string;
 };
 
 export type BlogPostModule = {
@@ -56,8 +54,8 @@ function assertBlogMetadata(metadata: unknown, slug: string): asserts metadata i
 
   const optionalStringFields: Array<keyof Pick<
     BlogMetadata,
-    "author" | "authorRole" | "authorAvatar" | "image" | "imageAlt"
-  >> = ["author", "authorRole", "authorAvatar", "image", "imageAlt"];
+    "author" | "authorRole" | "authorAvatar"
+  >> = ["author", "authorRole", "authorAvatar"];
 
   for (const field of optionalStringFields) {
     if (record[field] !== undefined && typeof record[field] !== "string") {
@@ -227,4 +225,12 @@ export async function getAllBlogPostSummaries(): Promise<BlogPostSummary[]> {
   );
 
   return posts.sort((a, b) => b.metadata.date.localeCompare(a.metadata.date));
+}
+
+export function getBlogThumbnailSrc(slug: string) {
+  return `/blog/${slug}/thumbnail.png`;
+}
+
+export function getBlogThumbnailAlt(title: string) {
+  return `${title} Thumbnail`;
 }
