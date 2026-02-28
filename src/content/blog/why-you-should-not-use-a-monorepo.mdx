@@ -8,6 +8,8 @@ authorRole: "Software engineer"
 authorAvatar: "/authors/ege-onder.png"
 ---
 
+import { DominoEffectWorkshop } from "@/components/blog/domino-effect-workshop";
+
 We have all seen the thread. Someone on [X](https://x.com) posts a screenshot of their perfectly organized monorepo structure, and declares it the only sensible way to build modern software. The likes pile up, people agree. And suddenly, your team is migrating everything into a single repository because, clearly, this is how "real" engineering is done. I get the appeal. I really do. I too have been using monorepos in my projects for three years.
 
 Monorepos are becoming increasingly popular in the software development world. They promise a unified codebase, shared dependencies, and a great developer experience (especially with the newest tools available), and that satisfying feeling of `git clone` once and having everything you need. If you are building a suite of microservices that all speak the same language, or a web application with a clearly unified tech stack, monorepos can be genuinely good for your use-case.
@@ -30,7 +32,11 @@ Because you are in a monorepo, you typically have a single root `node_modules` (
 
 In a polyrepo world, this is not an issue. Your web team updates React, deploys the fix, and goes to bed. Your mobile team does not have to do anything, since they are not affected by this. But in your monorepo, these timelines are forcibly synchronized. You are now forced to choose between leaving a known vulnerability in production or embarking on an unplanned, week-long journey of trying to come up with a workaround that satisfies both your needs.
 
-Perhaps you are thinking, **"Okay, but that is just a temporary pain. The Expo team will definitely come up with a solution for my problems. A lot of people should be affected by this, and they will prioritize it."** Maybe. But I have been in this situation. And there might not be many people with your specific configuration. The Expo team is doing an amazing job, but they have to prioritize based on the needs of their entire user base. If your specific combination of dependencies is not common, you might find yourself waiting for a fix that is not high on their priority list. In the meantime, you are stuck with a vulnerable web application or a broken mobile application.
+Perhaps you are thinking:
+
+> "Okay, but that is just a temporary pain. The Expo team will definitely come up with a solution for my problems. A lot of people should be affected by this, and they will prioritize it."
+
+Maybe. But I have been in this situation. And there might not be many people with your specific configuration. The Expo team is doing an amazing job, but they have to prioritize based on the needs of their entire user base. If your specific combination of dependencies is not common, you might find yourself waiting for a fix that is not high on their priority list. In the meantime, you are stuck with a vulnerable web application or a broken mobile application.
 
 ![The domino effect](/blog/why-you-should-not-use-a-monorepo/chapter-2.png)
 
@@ -50,6 +56,8 @@ Suddenly, updating a CSS utility framework requires you to:
 ...
 
 17. Finally, deploy the new versions and hope nothing breaks in production.
+
+<DominoEffectWorkshop />
 
 Welcome to the domino effect.
 

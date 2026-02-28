@@ -96,6 +96,17 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         {children}
       </p>
     ),
+    blockquote: ({ children, ...props }) => (
+      <blockquote
+        className="mb-6 border-l-4 px-6 py-4 [&_p]:text-muted-foreground [&>p:last-child]:mb-0"
+        style={{
+          borderInlineStartColor: "var(--accent-highlight)",
+        }}
+        {...props}
+      >
+        {children}
+      </blockquote>
+    ),
     a: ({ children, ...props }) => (
       <a {...props} target="_blank" rel="noopener noreferrer" href={`${props.href}?utm_source=egeonder.dev`} className="hover:text-foreground/60 transition-colors duration-150">
         <span className="underline underline-offset-4 decoration-2">{children}</span>
@@ -122,12 +133,12 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       <Image src={src} alt={alt} width={1200} height={675} priority className="h-auto w-full object-cover overflow-hidden rounded-2xl border dark:brightness-75" {...props} />
     ),
     ul: ({ children, ...props }) => (
-      <ul className="list-disc list-inside mb-4" {...props}>
+      <ul className="list-disc list-inside mb-4 ps-2" {...props}>
         {children}
       </ul>
     ),
     ol: ({ children, ...props }) => (
-      <ol className="list-decimal list-inside mb-4" {...props}>
+      <ol className="list-decimal list-inside mb-4 ps-2" {...props}>
         {children}
       </ol>
     ),

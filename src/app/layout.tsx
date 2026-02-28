@@ -11,6 +11,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { defaultMetadataRobots, defaultOpenGraphImage, defaultTwitterProfile, getMetadataBase, sharedKeywords, sharedMetadata } from "@/lib/metadata";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Toaster } from "sonner";
 
 const overusedGrotesk = localFont({
   src: "../../public/fonts/OverusedGrotesk-VF.woff2",
@@ -104,6 +105,7 @@ export default function RootLayout({
                 <TooltipProvider>
                   <Analytics />
                   <SpeedInsights />
+                  <Toaster position="bottom-center" />
                   <main className="mx-auto md:w-3/4 w-7/8 pt-16">{children}</main>
                 </TooltipProvider>
               </NavbarTitleProvider>

@@ -14,6 +14,7 @@ import { ReportView } from "./_components/report-view";
 import { getViews } from "@/lib/views";
 import { formatDate, formatViewCount, getInitials, isOlderThanOneYear } from "@/lib/utils";
 import { Footer } from "@/components/footer";
+import { ActionButtons } from "./_components/action-buttons";
 
 type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
@@ -128,6 +129,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {blogPost.metadata.description}
           </p>
         </ViewTransition>
+        <ActionButtons />
         {authorName ? (
           <ViewTransition name={viewTransitionNames.author}>
             <div className="flex items-center gap-3 pt-1">
