@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cacheLife } from "next/cache";
 import { calculateAge } from "@/lib/calculate-age";
+import { Hello } from "@/components/ui/hello";
 
 export async function AboutText() {
   "use cache";
@@ -20,10 +21,11 @@ export async function AboutText() {
   const highlightColor = "var(--accent-highlight)";
   const highlightUseInViewOptions = { once: true, initial: true, amount: 0.1 };
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
       <Suspense fallback={<Skeleton className="w-48 h-5" />}>
         <Online />
       </Suspense>
+      <Hello />
       <p className="text-xl">
         A {calculateAge()} year old curious developer. Currently working on{" "}
         <TextHighlighter className={highlightColorClassName} transition={highlightTransition as Transition} highlightColor={highlightColor} useInViewOptions={highlightUseInViewOptions}>
