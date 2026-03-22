@@ -72,8 +72,8 @@ export function SiteHeader() {
 
   return (
     <>
-      <nav className="fixed left-0 right-0 top-0 z-50 h-16 bg-transparent backdrop-blur-md">
-        <div className="mx-auto flex h-full w-7/8 items-center justify-between md:w-3/4">
+      <nav className="site-header-surface fixed left-0 right-0 top-0 z-50 h-(--site-header-height) pt-(--safe-area-inset-top) backdrop-blur-md">
+        <div className="mx-auto flex h-16 w-7/8 items-center justify-between md:w-3/4">
           <Link href="/" className="flex min-w-0 cursor-pointer select-none items-center gap-2" prefetch>
             <span className="mt-0.5" style={{ color: "var(--accent-logo)" }}>
               ✽
@@ -110,9 +110,13 @@ export function SiteHeader() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-x-0 bottom-0 top-16 z-40 bg-transparent backdrop-blur-md"
+            className="fixed inset-x-0 bottom-0 top-(--site-header-height) z-40"
           >
-            <nav className="mx-auto flex h-full w-7/8 items-center md:w-3/4">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 top-0 bottom-(--safe-area-inset-bottom) bg-background/5 backdrop-blur-md"
+            />
+            <nav className="relative mx-auto flex h-full w-7/8 items-center pb-(--safe-area-inset-bottom) md:w-3/4">
               <ul className="flex flex-col gap-5">
                 <li>
                   <CenterUnderline>

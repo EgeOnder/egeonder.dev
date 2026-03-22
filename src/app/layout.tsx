@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 
 import "./globals.css";
@@ -85,6 +85,12 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -106,7 +112,7 @@ export default function RootLayout({
                   <Analytics />
                   <SpeedInsights />
                   <Toaster position="bottom-center" />
-                  <main className="mx-auto md:w-3/4 w-7/8 pt-16">{children}</main>
+                  <main className="mx-auto w-7/8 pt-[calc(var(--site-header-height)+1rem)] md:w-3/4">{children}</main>
                 </TooltipProvider>
               </NavbarTitleProvider>
             </div>

@@ -51,6 +51,9 @@
 }
 
 :root {
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+  --site-header-height: calc(4rem + var(--safe-area-inset-top));
   --background: oklch(1 0 0);
   --select: oklch(0.6724 0.1308 38.76 / 50.2%);
   --accent-highlight: #f2ad91;
@@ -188,19 +191,41 @@
 }
 
 .theme-glow-primary {
-  background: radial-gradient(
-    ellipse at center,
-    rgb(var(--accent-glow-primary-rgb) / 0.14) 10%,
-    rgb(var(--accent-glow-primary-rgb) / 0) 45%
-  );
+  background: radial-gradient(ellipse at center, rgb(var(--accent-glow-primary-rgb) / 0.14) 10%, rgb(var(--accent-glow-primary-rgb) / 0) 45%);
 }
 
 .theme-glow-secondary {
-  background: radial-gradient(
-    ellipse at center,
-    rgb(var(--accent-glow-secondary-rgb) / 0.14) 5%,
-    rgb(var(--accent-glow-secondary-rgb) / 0) 10%
+  background: radial-gradient(ellipse at center, rgb(var(--accent-glow-secondary-rgb) / 0.14) 5%, rgb(var(--accent-glow-secondary-rgb) / 0) 10%);
+}
+
+.site-header-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 82%, var(--accent-highlight) 18%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--background-from) 72%, var(--accent-highlight) 28%) 0%,
+    color-mix(in oklab, var(--background-from) 86%, var(--accent-highlight) 14%) 58%,
+    color-mix(in oklab, var(--background-from) 94%, var(--accent-highlight) 6%) 100%
   );
+}
+
+.dark .site-header-surface::before {
+  border-bottom-color: color-mix(in oklab, var(--border) 90%, var(--accent-highlight) 10%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--background-from) 88%, var(--accent-highlight) 12%) 0%,
+    color-mix(in oklab, var(--background-from) 92%, var(--accent-highlight) 8%) 58%,
+    color-mix(in oklab, var(--background-from) 96%, var(--accent-highlight) 4%) 100%
+  );
+}
+
+@media (min-width: 48rem) {
+  .site-header-surface::before {
+    display: none;
+  }
 }
 
 .dark .shiki.shiki-themes {
