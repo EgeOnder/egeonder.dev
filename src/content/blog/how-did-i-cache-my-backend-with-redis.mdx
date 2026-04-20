@@ -6,6 +6,8 @@ readingTime: "6 min read"
 author: "Ege Onder"
 authorRole: "Software engineer"
 authorAvatar: "/authors/ege-onder.png"
+summaryProvider: "ChatGPT"
+summary: "While building kafeasist, a multi-tenant restaurant platform, performance issues emerged due to repeated database queries during login and company switching—especially problematic on free-tier infrastructure. By introducing a Redis-based caching layer (using Upstash), frequently accessed but rarely changing data was stored in memory, reducing redundant queries and easing database load without upgrading infrastructure. The implementation used a clean abstraction: cache-first reads, invalidation on writes, and TTL-based expiration. This led to ~90% fewer database queries and a 10× improvement in response times (P95 from 400ms to 40ms), making the app feel significantly faster while staying within free-tier limits."
 ---
 
 While developing [kafeasist](https://kafeasist.com/), a multi-tenant restaurant management platform, I encountered significant performance bottlenecks during user authentication and company context switching. Operating on infrastructure free tiers to minimize costs, I noticed that repetitive database queries were creating substantial latency. The solution was implementing a comprehensive caching strategy using Redis, which reduced database calls by approximately 90% and dramatically improved response times.

@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 
 import "./globals.css";
 import { AccentThemeProvider } from "@/components/accent-theme-provider";
+import { BlogVoicePlayerProvider } from "@/components/blog-voice-player-provider";
 import { NavbarTitleProvider } from "@/components/navbar-title-context";
 import { SiteHeader } from "@/components/site-header";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -103,17 +104,19 @@ export default function RootLayout({
           <AccentThemeProvider>
             <div className="relative z-10">
               <NavbarTitleProvider>
-                <SiteHeader />
-                <div aria-hidden className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
-                  <Glow variant="center" className="-left-[35vw] top-1/3 w-[70vw] opacity-80" />
-                  <Glow variant="center" className="-right-[35vw] top-2/3 w-[70vw] opacity-80" />
-                </div>
-                <TooltipProvider>
-                  <Analytics />
-                  <SpeedInsights />
-                  <Toaster position="bottom-center" />
-                  <main className="mx-auto w-7/8 pt-[calc(var(--site-header-height)+1rem)] md:w-3/4">{children}</main>
-                </TooltipProvider>
+                <BlogVoicePlayerProvider>
+                  <SiteHeader />
+                  <div aria-hidden className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+                    <Glow variant="center" className="-left-[35vw] top-1/3 w-[70vw] opacity-80" />
+                    <Glow variant="center" className="-right-[35vw] top-2/3 w-[70vw] opacity-80" />
+                  </div>
+                  <TooltipProvider>
+                    <Analytics />
+                    <SpeedInsights />
+                    <Toaster position="bottom-center" />
+                    <main className="mx-auto w-7/8 pt-[calc(var(--site-header-height)+1rem)] md:w-3/4">{children}</main>
+                  </TooltipProvider>
+                </BlogVoicePlayerProvider>
               </NavbarTitleProvider>
             </div>
           </AccentThemeProvider>

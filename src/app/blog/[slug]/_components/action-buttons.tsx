@@ -1,10 +1,7 @@
 "use client";
 
 import { ClaudeIcon } from "@/components/icons/claude";
-import { DeepSeekIcon } from "@/components/icons/deepseek";
-import { GeminiIcon } from "@/components/icons/gemini";
 import { T3ChatIcon } from "@/components/icons/t3-chat";
-import { BookmarkIcon } from "@/components/ui/bookmark";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -12,25 +9,41 @@ import { MessageSquareIcon } from "@/components/ui/message-square";
 import { SparklesIcon } from "@/components/ui/sparkles";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { UploadIcon } from "@/components/ui/upload";
-import { cn } from "@/lib/utils";
 import { FacebookLogoIcon, LinkedinLogoIcon, MailboxIcon, OpenAiLogoIcon, TwitterLogoIcon, WhatsappLogoIcon } from "@phosphor-icons/react";
 import { CheckIcon, ChevronDownIcon, ExternalLinkIcon, Link2Icon, type LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
-const BLOG_BOOKMARKS_STORAGE_KEY = "blog:bookmarks";
-const TOOLTIP_RESET_DELAY_MS = 2000;
-const OPEN_IN_PROMPT_CONTENT_MAX_CHARS = 12000;
+import { useBlogVoicePlayer } from "@/components/blog-voice-player-provider";
+
+const BLOG_OPEN_IN_PREFERENCE_STORAGE_KEY = "blog:open-in-preference";
 const SHARE_COPIED_RESET_DELAY_MS = 2200;
 
-const OPEN_IN_BASE_URLS = {
-  ChatGPT: "https://chat.openai.com/",
-  Gemini: "https://gemini.google.com/app",
-  Claude: "https://claude.ai/new",
-  DeepSeek: "https://chat.deepseek.com/",
-  "T3 Chat": "https://t3.chat/",
+const OPEN_IN_PROVIDERS = {
+  ChatGPT: {
+    createUrl: (prompt: string) =>
+      `https://chatgpt.com/?${new URLSearchParams({
+        hints: "search",
+        prompt,
+      })}`,
+  },
+  Claude: {
+    createUrl: (q: string) =>
+      `https://claude.ai/new?${new URLSearchParams({
+        q,
+      })}`,
+  },
+  "T3 Chat": {
+    createUrl: (q: string) =>
+      `https://t3.chat/new?${new URLSearchParams({
+        q,
+      })}`,
+  },
 } as const;
+
+type OpenInOption = keyof typeof OPEN_IN_PROVIDERS;
 
 type ShareTarget = "linkedin" | "twitter" | "facebook" | "whatsapp" | "email" | "copy";
 
@@ -80,21 +93,19 @@ const SHARE_ACTIONS: ShareAction[] = [
   },
 ];
 
-type StoredBlogBookmark = {
-  title: string;
-  path: string;
-  url: string;
-  createdAt: string;
-};
+const isOpenInOption = (value: unknown): value is OpenInOption => typeof value === "string" && value in OPEN_IN_PROVIDERS;
 
-const isStoredBlogBookmark = (value: unknown): value is StoredBlogBookmark => {
-  if (!value || typeof value !== "object") {
-    return false;
+const getOpenInIcon = (option: OpenInOption | null): ReactNode => {
+  switch (option) {
+    case "ChatGPT":
+      return <OpenAiLogoIcon />;
+    case "Claude":
+      return <ClaudeIcon />;
+    case "T3 Chat":
+      return <T3ChatIcon width={14} height={14} />;
+    default:
+      return <MessageSquareIcon />;
   }
-
-  const candidate = value as Record<string, unknown>;
-
-  return typeof candidate.title === "string" && typeof candidate.path === "string" && typeof candidate.url === "string" && typeof candidate.createdAt === "string";
 };
 
 const getCurrentPostContext = () => {
@@ -118,37 +129,12 @@ const normalizePromptText = (value: string) =>
     .replace(/[ \t]{2,}/g, " ")
     .trim();
 
-const getCurrentPostBodyText = () => {
-  const article = document.querySelector("article");
-  if (!article) {
-    return "";
-  }
-
-  const articleClone = article.cloneNode(true) as HTMLElement;
-  articleClone.querySelectorAll("header, footer, script, style, noscript").forEach((element) => {
-    element.remove();
-  });
-
-  return normalizePromptText(articleClone.textContent ?? "");
-};
-
-const getOpenInPrompt = (title: string, content: string) => {
+const getOpenInPrompt = (title: string, url: string) => {
   const normalizedTitle = normalizePromptText(title);
-  const normalizedContent = normalizePromptText(content);
-  const contentToSend =
-    normalizedContent.length > OPEN_IN_PROMPT_CONTENT_MAX_CHARS
-      ? `${normalizedContent.slice(0, OPEN_IN_PROMPT_CONTENT_MAX_CHARS)}\n\n[The blog content was truncated due to URL length limits.]`
-      : normalizedContent;
-
-  return `Here is a blog post titled "${normalizedTitle}". I will ask questions to you about this blog post. Read the post comprehensively and be prepared to answer any questions about this post. Respond with "I understand, you can ask me any question about this blog post.":\n\n${contentToSend}`;
+  return `Read this blog post titled "${normalizedTitle}": ${url}. I will chat with you about it and ask questions afterward.`;
 };
 
-const getOpenInUrl = (option: keyof typeof OPEN_IN_BASE_URLS, prompt: string) => {
-  const baseUrl = OPEN_IN_BASE_URLS[option];
-  const encodedPrompt = encodeURIComponent(prompt);
-  const separator = baseUrl.includes("?") ? "&" : "?";
-  return `${baseUrl}${separator}q=${encodedPrompt}`;
-};
+const getOpenInUrl = (option: OpenInOption, prompt: string) => OPEN_IN_PROVIDERS[option].createUrl(prompt);
 
 const getShareUrl = (target: Exclude<ShareTarget, "copy">, title: string, url: string) => {
   const encodedTitle = encodeURIComponent(title);
@@ -166,28 +152,6 @@ const getShareUrl = (target: Exclude<ShareTarget, "copy">, title: string, url: s
     case "email":
       return `mailto:?subject=${encodedTitle}&body=${encodeURIComponent(`${title}\n\n${url}`)}`;
   }
-};
-
-const readBookmarks = (): StoredBlogBookmark[] => {
-  const value = window.localStorage.getItem(BLOG_BOOKMARKS_STORAGE_KEY);
-  if (!value) {
-    return [];
-  }
-
-  try {
-    const parsed = JSON.parse(value) as unknown;
-    if (!Array.isArray(parsed)) {
-      return [];
-    }
-
-    return parsed.filter(isStoredBlogBookmark);
-  } catch {
-    return [];
-  }
-};
-
-const saveBookmarks = (bookmarks: StoredBlogBookmark[]) => {
-  window.localStorage.setItem(BLOG_BOOKMARKS_STORAGE_KEY, JSON.stringify(bookmarks));
 };
 
 const copyTextToClipboard = async (text: string): Promise<boolean> => {
@@ -211,38 +175,27 @@ const copyTextToClipboard = async (text: string): Promise<boolean> => {
   return successful;
 };
 
-export function ActionButtons() {
+type ActionButtonsProps = {
+  summary?: string | null;
+  summaryProvider?: string | null;
+  title: string;
+};
+
+export function ActionButtons({ summary, summaryProvider, title }: ActionButtonsProps) {
   const sparklesRef = useRef<React.ElementRef<typeof SparklesIcon>>(null);
   const uploadRef = useRef<React.ElementRef<typeof UploadIcon>>(null);
-  const bookmarkRef = useRef<React.ElementRef<typeof BookmarkIcon>>(null);
   const messageSquareRef = useRef<React.ElementRef<typeof MessageSquareIcon>>(null);
   const copyStatusTimeoutRef = useRef<number | null>(null);
+  const [isOpenInMenuOpen, setIsOpenInMenuOpen] = useState(false);
+  const [savedOpenInOption, setSavedOpenInOption] = useState<OpenInOption | null>(null);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [isLinkCopied, setIsLinkCopied] = useState(false);
-  const [bookmarkTooltipText, setBookmarkTooltipText] = useState("Bookmark");
-  const [isBookmarked, setIsBookmarked] = useState(false);
-
-  type OpenInOption = "ChatGPT" | "Gemini" | "Claude" | "DeepSeek" | "T3 Chat";
-
-  useEffect(() => {
-    if (bookmarkTooltipText === "Bookmark") {
-      return;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setBookmarkTooltipText("Bookmark");
-    }, TOOLTIP_RESET_DELAY_MS);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [bookmarkTooltipText]);
+  const { isSummaryDockOpen, showSummaryDock } = useBlogVoicePlayer();
 
   useEffect(() => {
     const frameId = window.requestAnimationFrame(() => {
-      const { path } = getCurrentPostContext();
-      const bookmarks = readBookmarks();
-      setIsBookmarked(bookmarks.some((bookmark) => bookmark.path === path));
+      const savedPreference = window.localStorage.getItem(BLOG_OPEN_IN_PREFERENCE_STORAGE_KEY);
+      setSavedOpenInOption(isOpenInOption(savedPreference) ? savedPreference : null);
     });
 
     return () => {
@@ -258,20 +211,49 @@ export function ActionButtons() {
     };
   }, []);
 
-  const handleComingSoonAction = useCallback(() => {
-    toast("This feature is coming soon!", {
-      icon: <SparklesIcon size={16} className="animate-pulse px-1" />,
+  useEffect(() => {
+    if (isSummaryDockOpen) {
+      sparklesRef.current?.startAnimation();
+      return;
+    }
+
+    sparklesRef.current?.stopAnimation();
+  }, [isSummaryDockOpen]);
+
+  const handleSummaryAction = useCallback(() => {
+    const normalizedSummary = summary?.trim();
+
+    if (!normalizedSummary) {
+      toast("An AI summary is not attached to this post yet.", {
+        icon: <SparklesIcon size={16} className="animate-pulse px-1" />,
+      });
+      return;
+    }
+
+    showSummaryDock({
+      provider: summaryProvider,
+      summary: normalizedSummary,
+      title,
     });
-  }, []);
+  }, [showSummaryDock, summary, summaryProvider, title]);
 
   const handleOpenIn = (option: OpenInOption) => {
-    return handleComingSoonAction();
-
-    const { title } = getCurrentPostContext();
-    const postBodyText = getCurrentPostBodyText();
-    const prompt = getOpenInPrompt(title, postBodyText);
+    const { title, url: postUrl } = getCurrentPostContext();
+    const prompt = getOpenInPrompt(title, postUrl);
     const url = getOpenInUrl(option, prompt);
+    window.localStorage.setItem(BLOG_OPEN_IN_PREFERENCE_STORAGE_KEY, option);
+    setSavedOpenInOption(option);
+    setIsOpenInMenuOpen(false);
     window.open(url, "_blank", "noopener,noreferrer");
+  };
+
+  const handlePrimaryOpenInClick = () => {
+    if (!savedOpenInOption) {
+      setIsOpenInMenuOpen(true);
+      return;
+    }
+
+    handleOpenIn(savedOpenInOption);
   };
 
   const handleShareDialogOpen = useCallback(() => {
@@ -311,186 +293,127 @@ export function ActionButtons() {
     setIsShareDialogOpen(false);
   }, []);
 
-  const handleBookmarkToggle = useCallback(() => {
-    bookmarkRef.current?.startAnimation();
-
-    const { title, path, url } = getCurrentPostContext();
-    const bookmarks = readBookmarks();
-    const alreadyBookmarked = bookmarks.some((bookmark) => bookmark.path === path);
-
-    if (alreadyBookmarked) {
-      const updatedBookmarks = bookmarks.filter((bookmark) => bookmark.path !== path);
-      saveBookmarks(updatedBookmarks);
-      setIsBookmarked(false);
-      setBookmarkTooltipText("Removed bookmark");
-      return;
-    }
-
-    const nextBookmark: StoredBlogBookmark = {
-      title,
-      path,
-      url,
-      createdAt: new Date().toISOString(),
-    };
-
-    saveBookmarks([nextBookmark, ...bookmarks.filter((bookmark) => bookmark.path !== path)]);
-    setIsBookmarked(true);
-    setBookmarkTooltipText("Bookmarked");
-  }, []);
-
   return (
-    <div className="flex items-center gap-4 flex-col md:flex-row">
+    <div className="flex items-center gap-4 flex-col md:flex-row w-full">
       <Button
-        onClick={handleComingSoonAction}
+        onClick={handleSummaryAction}
         onMouseEnter={() => {
           sparklesRef.current?.startAnimation();
         }}
         onMouseLeave={() => {
-          sparklesRef.current?.stopAnimation();
+          if (!isSummaryDockOpen) {
+            sparklesRef.current?.stopAnimation();
+          }
         }}
         className="flex items-center gap-2 w-full md:w-auto"
       >
         <SparklesIcon ref={sparklesRef} /> Get AI summary
       </Button>
-      <ButtonGroup className="w-full md:w-auto">
-        <Button
-          variant="outline"
-          className="flex items-center gap-2 flex-1"
-          onMouseEnter={() => {
-            messageSquareRef.current?.startAnimation();
-          }}
-          onMouseLeave={() => {
-            messageSquareRef.current?.stopAnimation();
-          }}
-        >
-          <MessageSquareIcon ref={messageSquareRef} />
-          Open in
-        </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button variant="outline" size="icon" aria-label="Open in options">
-                <ChevronDownIcon />
-              </Button>
-            }
-          />
-          <DropdownMenuContent align="end" className="w-40">
-            <DropdownMenuItem onClick={handleOpenIn.bind(null, "ChatGPT")}>
-              <OpenAiLogoIcon />
-              ChatGPT
-              <DropdownMenuShortcut>
-                <ExternalLinkIcon />
-              </DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleOpenIn.bind(null, "Gemini")}>
-              <GeminiIcon />
-              Gemini
-              <DropdownMenuShortcut>
-                <ExternalLinkIcon />
-              </DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleOpenIn.bind(null, "Claude")}>
-              <ClaudeIcon />
-              Claude
-              <DropdownMenuShortcut>
-                <ExternalLinkIcon />
-              </DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleOpenIn.bind(null, "DeepSeek")}>
-              <DeepSeekIcon />
-              DeepSeek
-              <DropdownMenuShortcut>
-                <ExternalLinkIcon />
-              </DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleOpenIn.bind(null, "T3 Chat")}>
-              <T3ChatIcon width={14} height={14} />
-              T3 Chat
-              <DropdownMenuShortcut>
-                <ExternalLinkIcon />
-              </DropdownMenuShortcut>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </ButtonGroup>
-      <div className="flex items-center justify-center gap-4">
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Share this blog post"
-                onClick={handleShareDialogOpen}
-                onMouseEnter={() => {
-                  uploadRef.current?.startAnimation();
-                }}
-                onMouseLeave={() => {
-                  uploadRef.current?.stopAnimation();
-                }}
-              >
-                <UploadIcon ref={uploadRef} />
-              </Button>
-            }
-            type="button"
-          />
-          <TooltipContent>Share</TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label={isBookmarked ? "Remove bookmark" : "Bookmark this post"}
-                aria-pressed={isBookmarked}
-                onClick={handleComingSoonAction}
-                className={cn(
-                  "transition-colors",
-                  isBookmarked && "bg-amber-500/15 text-amber-700 hover:bg-amber-500/25 hover:text-amber-800 dark:bg-amber-400/20 dark:text-amber-200 dark:hover:bg-amber-400/30",
-                )}
-                onMouseEnter={() => {
-                  bookmarkRef.current?.startAnimation();
-                }}
-                onMouseLeave={() => {
-                  bookmarkRef.current?.stopAnimation();
-                }}
-              >
-                <BookmarkIcon ref={bookmarkRef} />
-              </Button>
-            }
-            type="button"
-          />
-          <TooltipContent>{bookmarkTooltipText}</TooltipContent>
-        </Tooltip>
-        <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
-          <DialogContent>
-            <DialogHeader className="mb-2 place-items-center">
-              <DialogTitle>Share this blog post</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-3 flex flex-col">
-              {SHARE_ACTIONS.map((action) => {
-                const isCopyAction = action.id === "copy";
-                const ActionIcon = isCopyAction && isLinkCopied ? CheckIcon : action.Icon;
-                const label = isCopyAction && isLinkCopied ? "Copied!" : action.label;
+      <div className="w-full flex gap-2">
+        <ButtonGroup className="flex-1 md:flex-none">
+          <Button
+            variant="outline"
+            className="flex items-center gap-2 flex-1"
+            onClick={handlePrimaryOpenInClick}
+            onMouseEnter={() => {
+              if (!savedOpenInOption) {
+                messageSquareRef.current?.startAnimation();
+              }
+            }}
+            onMouseLeave={() => {
+              if (!savedOpenInOption) {
+                messageSquareRef.current?.stopAnimation();
+              }
+            }}
+          >
+            {savedOpenInOption ? getOpenInIcon(savedOpenInOption) : <MessageSquareIcon ref={messageSquareRef} />}
+            {savedOpenInOption ? `Open in ${savedOpenInOption}` : "Open in"}
+          </Button>
+          <DropdownMenu open={isOpenInMenuOpen} onOpenChange={setIsOpenInMenuOpen}>
+            <DropdownMenuTrigger
+              render={
+                <Button variant="outline" size="icon" aria-label="Open in options">
+                  <ChevronDownIcon />
+                </Button>
+              }
+            />
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuItem onClick={handleOpenIn.bind(null, "ChatGPT")}>
+                <OpenAiLogoIcon />
+                ChatGPT
+                <DropdownMenuShortcut>
+                  <ExternalLinkIcon />
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleOpenIn.bind(null, "Claude")}>
+                <ClaudeIcon />
+                Claude
+                <DropdownMenuShortcut>
+                  <ExternalLinkIcon />
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleOpenIn.bind(null, "T3 Chat")}>
+                <T3ChatIcon width={14} height={14} />
+                T3 Chat
+                <DropdownMenuShortcut>
+                  <ExternalLinkIcon />
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </ButtonGroup>
+        <div className="flex items-center justify-center gap-4">
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Share this blog post"
+                  onClick={handleShareDialogOpen}
+                  onMouseEnter={() => {
+                    uploadRef.current?.startAnimation();
+                  }}
+                  onMouseLeave={() => {
+                    uploadRef.current?.stopAnimation();
+                  }}
+                >
+                  <UploadIcon ref={uploadRef} />
+                </Button>
+              }
+              type="button"
+            />
+            <TooltipContent>Share</TooltipContent>
+          </Tooltip>
+          <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
+            <DialogContent>
+              <DialogHeader className="mb-2 place-items-center">
+                <DialogTitle>Share this blog post</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3 flex flex-col">
+                {SHARE_ACTIONS.map((action) => {
+                  const isCopyAction = action.id === "copy";
+                  const ActionIcon = isCopyAction && isLinkCopied ? CheckIcon : action.Icon;
+                  const label = isCopyAction && isLinkCopied ? "Copied!" : action.label;
 
-                return (
-                  <Button
-                    key={action.id}
-                    variant="outline"
-                    type="button"
-                    onClick={() => {
-                      void handleShareAction(action.id);
-                    }}
-                  >
-                    <ActionIcon className="size-4 sm:size-5" />
-                    {label}
-                  </Button>
-                );
-              })}
-            </div>
-          </DialogContent>
-        </Dialog>
+                  return (
+                    <Button
+                      key={action.id}
+                      variant="outline"
+                      type="button"
+                      onClick={() => {
+                        void handleShareAction(action.id);
+                      }}
+                    >
+                      <ActionIcon className="size-4 sm:size-5" />
+                      {label}
+                    </Button>
+                  );
+                })}
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
     </div>
   );

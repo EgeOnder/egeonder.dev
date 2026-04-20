@@ -4,17 +4,18 @@ import { notFound } from "next/navigation";
 import { ViewTransition } from "react";
 
 import { BlogNavbarTitleSync } from "@/app/blog/[slug]/_components/blog-navbar-title-sync";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getBlogPostModule, getBlogSlugs, getBlogThumbnailAlt, getBlogThumbnailSrc } from "@/lib/blog";
+import { getBlogAudioSrc } from "@/lib/blog";
 import { getBlogViewTransitionNames } from "@/lib/blog-view-transition";
 import { defaultMetadataRobots, defaultTwitterProfile, sharedKeywords, sharedMetadata } from "@/lib/metadata";
 import { cacheLife } from "next/cache";
 
 import { ReportView } from "./_components/report-view";
 import { getViews } from "@/lib/views";
-import { formatDate, formatViewCount, getInitials, isOlderThanOneYear } from "@/lib/utils";
+import { formatDate, formatViewCount, isOlderThanOneYear } from "@/lib/utils";
 import { Footer } from "@/components/footer";
 import { ActionButtons } from "./_components/action-buttons";
+import { BlogVoiceTranscriptPlayer } from "./_components/blog-voice-transcript-player";
 
 type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
@@ -96,9 +97,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const viewTransitionNames = getBlogViewTransitionNames(slug);
   const publishedDate = formatDate(blogPost.metadata.date);
   const isOlderPost = isOlderThanOneYear(blogPost.metadata.date);
-  const authorName = blogPost.metadata.author?.trim();
   const imageSrc = getBlogThumbnailSrc(slug);
   const imageAlt = getBlogThumbnailAlt(blogPost.metadata.title);
+  const audioSrc = await getBlogAudioSrc(slug, blogPost.metadata.audioSrc);
 
   return (
     <article className="mx-auto max-w-3xl pb-16 space-y-8">
@@ -129,21 +130,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {blogPost.metadata.description}
           </p>
         </ViewTransition>
-        <ActionButtons />
-        {authorName ? (
-          <ViewTransition name={viewTransitionNames.author}>
-            <div className="flex items-center gap-3 pt-1">
-              <Avatar size="lg" className="size-11 after:mix-blend-normal dark:after:mix-blend-normal">
-                {blogPost.metadata.authorAvatar ? <AvatarImage src={blogPost.metadata.authorAvatar} alt={authorName} /> : null}
-                <AvatarFallback>{getInitials(authorName)}</AvatarFallback>
-              </Avatar>
-              <div className="leading-tight">
-                <p className="font-medium">{authorName}</p>
-                {blogPost.metadata.authorRole ? <p className="text-sm text-muted-foreground">{blogPost.metadata.authorRole}</p> : null}
-              </div>
-            </div>
-          </ViewTransition>
-        ) : null}
+        <ActionButtons summary={blogPost.metadata.summary} summaryProvider={blogPost.metadata.summaryProvider} title={blogPost.metadata.title} />
+        <BlogVoiceTranscriptPlayer src={audioSrc} title={blogPost.metadata.title} />
       </header>
       <Post />
       <Footer />

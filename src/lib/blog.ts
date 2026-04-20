@@ -12,6 +12,9 @@ export type BlogMetadata = {
   date: string;
   tags?: string[];
   readingTime?: string;
+  audioSrc?: string;
+  summary?: string;
+  summaryProvider?: string;
   author?: string;
   authorRole?: string;
   authorAvatar?: string;
@@ -49,7 +52,9 @@ function assertBlogMetadata(metadata: unknown, slug: string): asserts metadata i
     throw new Error(`Invalid blog metadata for "${slug}": "tags" must be an array of non-empty strings when provided.`);
   }
 
-  const optionalStringFields: Array<keyof Pick<BlogMetadata, "author" | "authorRole" | "authorAvatar">> = ["author", "authorRole", "authorAvatar"];
+  const optionalStringFields: Array<
+    keyof Pick<BlogMetadata, "audioSrc" | "summary" | "summaryProvider" | "author" | "authorRole" | "authorAvatar">
+  > = ["audioSrc", "summary", "summaryProvider", "author", "authorRole", "authorAvatar"];
 
   for (const field of optionalStringFields) {
     if (record[field] !== undefined && typeof record[field] !== "string") {
@@ -225,4 +230,25 @@ export function getBlogThumbnailSrc(slug: string) {
 
 export function getBlogThumbnailAlt(title: string) {
   return `${title} Thumbnail`;
+}
+
+export async function getBlogAudioSrc(slug: string, explicitAudioSrc?: string) {
+  if (explicitAudioSrc) return explicitAudioSrc;
+
+  const candidateFiles = ["voice.mp3", "audio.mp3", "narration.mp3"];
+
+  for (const fileName of candidateFiles) {
+    const publicPath = path.join(process.cwd(), "public", "blog", slug, fileName);
+
+    try {
+      await fs.access(publicPath);
+      return `/blog/${slug}/${fileName}`;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+        throw error;
+      }
+    }
+  }
+
+  return null;
 }

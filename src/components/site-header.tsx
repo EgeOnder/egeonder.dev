@@ -49,6 +49,7 @@ export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuIconRef = useRef<MenuIconHandle>(null);
   const { title: navbarTitle } = useNavbarTitle();
+  const menuBackdropTransition = { duration: 0.24, ease: [0.22, 1, 0.36, 1] as const };
 
   const closeMenu = () => {
     setIsMenuOpen(false);
@@ -102,6 +103,15 @@ export function SiteHeader() {
         </div>
       </nav>
 
+      <motion.div
+        aria-hidden
+        initial={false}
+        animate={{ opacity: isMenuOpen ? 1 : 0 }}
+        transition={menuBackdropTransition}
+        className="pointer-events-none fixed inset-x-0 bottom-0 top-(--site-header-height) z-30 bg-background/5 backdrop-blur-md"
+        style={{ willChange: "opacity" }}
+      />
+
       <AnimatePresence>
         {isMenuOpen ? (
           <motion.aside
@@ -112,10 +122,6 @@ export function SiteHeader() {
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="fixed inset-x-0 bottom-0 top-(--site-header-height) z-40"
           >
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-x-0 top-0 bottom-(--safe-area-inset-bottom) bg-background/5 backdrop-blur-md"
-            />
             <nav className="relative mx-auto flex h-full w-7/8 items-center pb-(--safe-area-inset-bottom) md:w-3/4">
               <ul className="flex flex-col gap-5">
                 <li>
