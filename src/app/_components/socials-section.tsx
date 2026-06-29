@@ -1,5 +1,5 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { GithubLogoIcon, LinkedinLogoIcon, MailboxIcon } from "@phosphor-icons/react/ssr";
+import { GithubLogoIcon, LinkedinLogoIcon, MailboxIcon, XLogoIcon } from "@phosphor-icons/react/ssr";
 import Link from "next/link";
 
 export function SocialsSection() {
@@ -9,8 +9,13 @@ export function SocialsSection() {
   const SOCIALS = [
     {
       name: "GitHub",
-      href: "https://github.com/EgeOnder",
+      href: "https://github.com/egeonder",
       icon: <GithubLogoIcon />,
+    },
+    {
+      name: "X (formerly Twitter)",
+      href: "https://x.com/aegeonder",
+      icon: <XLogoIcon />,
     },
     {
       name: "LinkedIn",

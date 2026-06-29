@@ -6,13 +6,13 @@ const DEFAULT_SITE_URL = "https://egeonder.dev";
 
 export const PROFILES = {
   github: {
-    username: "EgeOnder",
+    username: "egeonder",
   },
   linkedin: {
     username: "egeonder",
   },
   twitter: {
-    username: "EgeOnder23",
+    username: "aegeonder",
   },
 } as const;
 
