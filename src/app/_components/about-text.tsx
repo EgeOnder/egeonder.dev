@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cacheLife } from "next/cache";
 import { calculateAge } from "@/lib/calculate-age";
+import { WebsitePreviewLink } from "@/components/website-preview-link";
 // import { Hello } from "@/components/ui/hello";
 
 export async function AboutText() {
@@ -27,10 +28,36 @@ export async function AboutText() {
       </Suspense>
       {/* <Hello /> */}
       <p className="text-xl">
-        A {calculateAge()} year old curious developer. Currently working on{" "}
-        <TextHighlighter className={highlightColorClassName} transition={highlightTransition as Transition} highlightColor={highlightColor} useInViewOptions={highlightUseInViewOptions}>
+        A {calculateAge()} year old curious developer. Currently working at{" "}
+        <WebsitePreviewLink
+          href="https://www.getmidas.com/"
+          name="Midas"
+          previewSrc="/images/site-previews/midas.png"
+          previewAlt="Midas (getmidas.com) app"
+          highlightProps={{
+            className: highlightColorClassName,
+            transition: highlightTransition as Transition,
+            highlightColor,
+            useInViewOptions: highlightUseInViewOptions,
+          }}
+        >
+          Midas
+        </WebsitePreviewLink>{" "}
+        on desktop trading tools for professionals. Also building{" "}
+        <WebsitePreviewLink
+          href="https://kafeasist.com/"
+          name="kafeasist"
+          previewSrc="/images/site-previews/kafeasist.png"
+          previewAlt="kafeasist image"
+          highlightProps={{
+            className: highlightColorClassName,
+            transition: highlightTransition as Transition,
+            highlightColor,
+            useInViewOptions: highlightUseInViewOptions,
+          }}
+        >
           kafeasist
-        </TextHighlighter>
+        </WebsitePreviewLink>
         , a dashboard that helps you manage your restaurant. Loves writing about things they learn, things they use, and things they like. Also loves to build things that they find exciting.
       </p>
       <p className="text-xl">
@@ -38,7 +65,7 @@ export async function AboutText() {
         <TextHighlighter className={highlightColorClassName} transition={highlightTransition as Transition} highlightColor={highlightColor} useInViewOptions={highlightUseInViewOptions}>
           Next, Tailwind, and TypeScript
         </TextHighlighter>
-        . Currently learning Go.
+        . Currently learning how to prompt LLMs better.
       </p>
     </div>
   );

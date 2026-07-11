@@ -7,7 +7,7 @@ export const contentType = "image/png";
 export const size = OG_IMAGE_SIZE;
 
 export default async function OpenGraphImage() {
-  const description = `A ${calculateAge()} year old curious developer. Currently working on kafeasist. Loves writing about things they learn, things they use, and things they like. Also loves to build things that they find exciting.`;
+  const description = `A ${calculateAge()} year old curious developer. Currently working at Midas on desktop trading tools for professionals. Also building kafeasist. Loves writing about things they learn, things they use, and things they like. Also loves to build things that they find exciting.`;
 
   return createOgImageResponse({
     body: <ProfileOgBody description={description} />,
